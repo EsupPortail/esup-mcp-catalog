@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Statut des services MyIA</title>
+  <style>
+    :root {
+      --ink: #17324d;
+      --muted: #587083;
+      --paper: #f6f3ed;
+      --panel: #ffffff;
+      --line: #d9e0df;
+      --green: #1f7a5a;
+      --green-soft: #dff1e8;
+      --amber: #a66518;
+      --amber-soft: #fff0d7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(214, 229, 224, .72), transparent 42%),
+        linear-gradient(315deg, rgba(241, 194, 125, .22), transparent 38%),
+        var(--paper);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    main {
+      width: min(1080px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 64px 0 48px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 34px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 26px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.1rem, 5vw, 4.2rem);
+      line-height: .98;
+      letter-spacing: 0;
+      font-weight: 700;
+    }
+
+    .intro {
+      max-width: 520px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font: 1rem/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .overall {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border: 1px solid #b9dbc9;
+      border-radius: 999px;
+      color: var(--green);
+      background: var(--green-soft);
+      font: 700 .82rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      white-space: nowrap;
+    }
+
+    .overall::before {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      content: "";
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .service {
+      display: flex;
+      min-height: 280px;
+      flex-direction: column;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .86);
+      box-shadow: 0 12px 30px rgba(23, 50, 77, .07);
+    }
+
+    .service:nth-child(1) { border-top: 5px solid #e1a34b; }
+    .service:nth-child(2) { border-top: 5px solid #7197b2; }
+    .service:nth-child(3) { border-top: 5px solid #69a98c; }
+
+    .service-label {
+      margin-bottom: 18px;
+      color: var(--muted);
+      font: 700 .75rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.65rem;
+      letter-spacing: 0;
+    }
+
+    .role {
+      min-height: 50px;
+      margin: 10px 0 20px;
+      color: var(--muted);
+      font: .95rem/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .endpoint {
+      margin-top: auto;
+      padding: 13px;
+      overflow-wrap: anywhere;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      background: #f8faf9;
+      font: .83rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    .endpoint small {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font: 700 .7rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    a {
+      color: var(--ink);
+      font: 700 .9rem/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .status {
+      color: var(--green);
+      font: 700 .76rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .status::before {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin: 0 6px 1px 0;
+      border-radius: 50%;
+      background: var(--green);
+      content: "";
+    }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font: .88rem/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    footer strong { color: var(--ink); }
+
+    @media (max-width: 760px) {
+      main { width: min(100% - 28px, 560px); padding-top: 34px; }
+      header { align-items: start; flex-direction: column; }
+      .services { grid-template-columns: 1fr; }
+      .service { min-height: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Services MyIA</h1>
+        <p class="intro">Points d'accès locaux pour vérifier rapidement l'instance MyIA et le prototype MCP LimeSurvey.</p>
+      </div>
+      <div class="overall">Services vérifiés</div>
+    </header>
+
+    <section class="services" aria-label="Services lancés">
+      <article class="service">
+        <div class="service-label">Interface</div>
+        <h2>OpenWebUI</h2>
+        <p class="role">Interface de conversation et point d'entrée utilisateur de MyIA.</p>
+        <div class="endpoint"><small>URL de test</small>http://127.0.0.1:3000</div>
+        <div class="actions">
+          <a href="http://127.0.0.1:3000" target="_blank" rel="noopener">Ouvrir OpenWebUI</a>
+          <span class="status">HTTP 200</span>
+        </div>
+      </article>
+
+      <article class="service">
+        <div class="service-label">Modèle</div>
+        <h2>LiteLLM</h2>
+        <p class="role">Proxy OpenAI-compatible vers Mistral ESR / ILaaS.</p>
+        <div class="endpoint"><small>Healthcheck</small>http://127.0.0.1:4000/health/liveliness</div>
+        <div class="actions">
+          <a href="http://127.0.0.1:4000/health/liveliness" target="_blank" rel="noopener">Tester LiteLLM</a>
+          <span class="status">HTTP 200</span>
+        </div>
+      </article>
+
+      <article class="service">
+        <div class="service-label">Connecteur MCP</div>
+        <h2>LimeSurvey MCP</h2>
+        <p class="role">Serveur FastMCP local en Streamable HTTP pour le prototype LimeSurvey.</p>
+        <div class="endpoint"><small>Healthcheck</small>http://127.0.0.1:8001/health</div>
+        <div class="actions">
+          <a href="http://127.0.0.1:8001/health" target="_blank" rel="noopener">Tester le MCP</a>
+          <span class="status">HTTP 200</span>
+        </div>
+      </article>
+    </section>
+
+    <footer><strong>Endpoint MCP pour LiteLLM :</strong> <code>http://host.docker.internal:8001/mcp</code></footer>
+  </main>
+</body>
+</html>
