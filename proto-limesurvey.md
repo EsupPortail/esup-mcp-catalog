@@ -29,6 +29,25 @@ python3 --version
 
 ## 2. Démarrer MyIA et Mistral ESR
 
+### Cas d'une instance MyIA déjà déployée
+
+Si MyIA est déjà installé dans `/Users/nicktruch/Code/myia`, ne pas recréer la stack et ne pas toucher à ses volumes. Vérifier d'abord que Docker Desktop est démarré, puis contrôler les services depuis ce dossier :
+
+```bash
+cd /Users/nicktruch/Code/myia
+docker compose -f docker-compose.macos.yml ps
+curl http://127.0.0.1:4000/health/liveliness
+open http://localhost:3000
+```
+
+Dans ce cas, le prototype MCP peut être lancé séparément sur l'hôte, sur le port `8001`. LiteLLM, qui tourne dans Docker, pourra joindre ce service macOS avec :
+
+```text
+http://host.docker.internal:8001/mcp
+```
+
+Cette méthode conserve la base PostgreSQL, Redis et les données OpenWebUI de MyIA intactes.
+
 Le dépôt de référence MyIA se trouve dans `_reference-myia/` dans l'environnement de test. Pour partir directement du dépôt officiel :
 
 ```bash
@@ -195,6 +214,27 @@ Authorization: Bearer <JWT>
 
 Le client `client.cli` fourni par le prototype génère automatiquement le JWT de développement à partir de `CLIENT_JWT_SUB` et `CLIENT_JWT_SECRET_KEY`.
 
+## 6 bis. Déclarer le prototype dans LiteLLM existant
+
+Pour tester le routage avec l'instance MyIA déjà déployée :
+
+1. ouvrir l'administration LiteLLM sur `http://localhost:4000` ;
+2. ouvrir la section **MCP Servers** ;
+3. ajouter un serveur Streamable HTTP ;
+4. utiliser l'URL `http://host.docker.internal:8001/mcp` ;
+5. configurer l'en-tête `Authorization: Bearer <JWT>` ;
+6. vérifier que les outils `list_my_surveys` et `get_lss_generator_skill` sont découverts.
+
+Le JWT de développement doit avoir un claim `sub` correspondant à l'utilisateur LimeSurvey. Pour un test depuis le client fourni, les variables `CLIENT_LLM_BASE_URL` et `CLIENT_LLM_API_KEY` doivent pointer vers l'instance LiteLLM de MyIA :
+
+```env
+CLIENT_LLM_MODEL=mistral-medium
+CLIENT_LLM_BASE_URL=http://127.0.0.1:4000/v1
+CLIENT_LLM_API_KEY=<valeur de LITELLM_MASTER_KEY dans /Users/nicktruch/Code/myia/.env>
+```
+
+Ne pas copier la valeur réelle de `LITELLM_MASTER_KEY` dans ce fichier, dans Git ou dans une conversation.
+
 ## 7. Tester avec l'agent Mistral
 
 Depuis le dossier du prototype :
@@ -259,6 +299,8 @@ Dans l'administration LiteLLM :
 3. saisir `http://host.docker.internal:8001/mcp` ;
 4. configurer l'en-tête JWT ;
 5. vérifier la découverte des outils.
+
+Si LiteLLM est déjà déployé dans `/Users/nicktruch/Code/myia`, cette déclaration suffit pour le test ; il n'est pas nécessaire de modifier `config/litellm_config.yaml` ni de redémarrer PostgreSQL, Redis ou OpenWebUI.
 
 Cette étape valide le routage LiteLLM. Elle ne constitue pas encore l'intégration complète dans OpenWebUI : le bridge `esup-mcp-agent` décrit dans le document d'architecture reste à développer pour gérer proprement la boucle agentique, les confirmations et les permissions par utilisateur.
 
