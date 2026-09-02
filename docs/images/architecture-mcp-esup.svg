@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture MCP Esup MyIA Mistral</title>
+  <desc id="desc">OpenWebUI passe par le bridge MCP Esup vers LiteLLM et Mistral ESR, tandis que le bridge route vers plusieurs connecteurs MCP.</desc>
+  <defs>
+    <style>
+      .box { stroke: #17324d; stroke-width: 2; rx: 14; }
+      .label { font: 600 20px sans-serif; fill: #17324d; text-anchor: middle; }
+      .small { font: 16px sans-serif; fill: #35536d; text-anchor: middle; }
+      .arrow { stroke: #42708f; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#42708f"/></marker>
+  </defs>
+  <rect width="1200" height="620" fill="#f6f3ed"/>
+  <text x="60" y="58" font="700 30px sans-serif" fill="#17324d">Esup MyIA + MCP</text>
+  <text x="60" y="88" font="16px sans-serif" fill="#547083">Plan de contrôle séparé du proxy LLM</text>
+  <rect class="box" x="55" y="180" width="190" height="110" fill="#f1c27d"/>
+  <text class="label" x="150" y="228">Utilisateur</text><text class="small" x="150" y="256">OpenWebUI</text>
+  <rect class="box" x="330" y="145" width="245" height="180" fill="#a9d6c2"/>
+  <text class="label" x="452" y="205">Esup MCP</text><text class="label" x="452" y="233">Agent Bridge</text><text class="small" x="452" y="272">identité · ACL · confirmation</text>
+  <rect class="box" x="675" y="100" width="190" height="110" fill="#b8cbe0"/>
+  <text class="label" x="770" y="148">LiteLLM</text><text class="small" x="770" y="176">proxy LLM / quotas</text>
+  <rect class="box" x="960" y="100" width="185" height="110" fill="#e6a6a6"/>
+  <text class="label" x="1052" y="148">Mistral ESR</text><text class="small" x="1052" y="176">ILaaS / CINES</text>
+  <rect class="box" x="675" y="335" width="190" height="100" fill="#d6c5e9"/>
+  <text class="label" x="770" y="378">MCP Gateway</text><text class="small" x="770" y="406">routage contrôlé</text>
+  <rect class="box" x="930" y="280" width="215" height="90" fill="#c3d9a6"/>
+  <text class="label" x="1037" y="318">LimeSurvey MCP</text><text class="small" x="1037" y="346">auto-hébergé</text>
+  <rect class="box" x="930" y="395" width="215" height="90" fill="#c3d9a6"/>
+  <text class="label" x="1037" y="433">Atlassian MCP</text><text class="small" x="1037" y="461">endpoint distant</text>
+  <path class="arrow" d="M245 235 H330"/><path class="arrow" d="M575 190 H675"/><path class="arrow" d="M865 155 H960"/><path class="arrow" d="M452 325 V385 H675"/><path class="arrow" d="M865 375 H930"/><path class="arrow" d="M865 390 V440 H930"/>
+  <rect x="55" y="520" width="1090" height="52" rx="10" fill="#17324d"/>
+  <text x="600" y="553" font="16px sans-serif" fill="#fff" text-anchor="middle">PostgreSQL : persistance et audit · Redis : cache · OIDC/CAS : identité</text>
+</svg>
