@@ -1,0 +1,16 @@
+# Private project notes
+/proto-limesurvey.md
+/ignore/
+
+# Local and generated files
+.DS_Store
+*.zip
+/_reference-myia/
+
+# Secrets and local environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa*

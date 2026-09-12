@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Services MyIA</title>
+</head>
+<body>
+  <h1>Services MyIA</h1>
+
+  <p>URLs de test des services lancés :</p>
+
+  <ol>
+    <li>
+      <strong>OpenWebUI</strong> - interface utilisateur :
+      <a href="http://127.0.0.1:3000">http://127.0.0.1:3000</a>
+    </li>
+    <li>
+      <strong>LiteLLM</strong> - proxy vers Mistral ESR / ILaaS :
+      <a href="http://127.0.0.1:4000/health/liveliness">http://127.0.0.1:4000/health/liveliness</a>
+    </li>
+    <li>
+      <strong>data.gouv.fr MCP</strong> - serveur MCP public :
+      <a href="https://mcp.data.gouv.fr/mcp">https://mcp.data.gouv.fr/mcp</a>
+    </li>
+    <li>
+      <strong>Grist MCP</strong> - serveur MCP local pour La Suite numérique :
+      <code>http://127.0.0.1:8000/mcp</code>
+    </li>
+  </ol>
+
+  <h2>Endpoints MCP</h2>
+
+  <ul>
+    <li>data.gouv.fr : <code>https://mcp.data.gouv.fr/mcp</code></li>
+    <li>Grist local : <code>http://host.docker.internal:8000/mcp</code></li>
+  </ul>
+</body>
+</html>
