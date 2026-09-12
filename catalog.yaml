@@ -1,0 +1,6 @@
+version: 1
+name: esup-mcp-catalog
+purpose: Catalogue de connecteurs MCP pour le POC Esup MyIA.
+connectors:
+  - datagouv
+  - grist

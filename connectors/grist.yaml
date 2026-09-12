@@ -1,0 +1,23 @@
+id: grist
+display_name: Grist MCP / La Suite numérique
+status: poc
+source:
+  repository: https://github.com/nic01asFr/mcp-server-grist
+  documentation: https://github.com/nic01asFr/mcp-server-grist#readme
+connection:
+  transports: [stdio, streamable-http]
+  default_transport: stdio
+  http_url: http://127.0.0.1:8000/mcp
+  command: uvx
+  args: [mcp-server-grist]
+configuration:
+  required:
+    - GRIST_API_KEY
+  optional:
+    GRIST_API_URL: https://docs.getgrist.com/api
+capabilities:
+  domains: [navigation, queries, records, administration, access, export, attachments, webhooks]
+security:
+  read_access_requires_confirmation: false
+  write_access_requires_confirmation: true
+  destructive_access_requires_confirmation: true

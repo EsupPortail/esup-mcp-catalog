@@ -1,0 +1,16 @@
+id: datagouv
+display_name: data.gouv.fr MCP
+status: poc
+source:
+  repository: https://github.com/datagouv/datagouv-mcp
+  documentation: https://github.com/datagouv/datagouv-mcp#readme
+connection:
+  transport: streamable-http
+  url: https://mcp.data.gouv.fr/mcp
+  authentication: none
+capabilities:
+  access: read-only
+  domains: [datasets, resources, organizations, dataservices, metrics]
+security:
+  confirmation_required: false
+  external_results_are_untrusted: true

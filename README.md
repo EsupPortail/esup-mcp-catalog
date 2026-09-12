@@ -1,6 +1,6 @@
-# POC MCP pour Esup MyIA
+# MCP Catalog pour Esup MyIA
 
-Ce dépôt documente le raccordement d'Esup MyIA Mistral AMUE à deux serveurs MCP existants :
+Ce dépôt constitue le POC du catalogue de serveurs MCP pour Esup MyIA. Il documente le raccordement d'Esup MyIA Mistral AMUE à deux serveurs MCP existants :
 
 - [data.gouv.fr MCP](https://github.com/datagouv/datagouv-mcp), serveur public de consultation des données et ressources data.gouv.fr ;
 - [Grist MCP](https://github.com/nic01asFr/mcp-server-grist), connecteur Grist utilisé pour les besoins de La Suite numérique.
@@ -83,6 +83,21 @@ Exemple STDIO avec `uvx` :
 ```
 
 Ne remplacez jamais `${GRIST_API_KEY}` par une valeur réelle dans un fichier versionné.
+
+## Documentation des connecteurs
+
+Le parcours complet d'ajout, de test, d'activation et de retrait est décrit dans le [guide d'installation](docs/installation.md).
+
+Chaque connecteur dispose d'une fiche qui décrit son rôle, son installation, ses capacités, ses permissions, son premier test et son dépannage :
+
+- [Connecteur data.gouv.fr](docs/connectors/datagouv.md) ;
+- [Connecteur Grist](docs/connectors/grist.md).
+
+Le catalogue et les manifestes YAML associés sont disponibles ici :
+
+- [Catalogue du POC](catalog.yaml) ;
+- [Manifeste data.gouv.fr](connectors/datagouv.yaml) ;
+- [Manifeste Grist](connectors/grist.yaml).
 
 ## Périmètre et évolutions
 
