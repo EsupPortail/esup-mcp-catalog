@@ -32,6 +32,11 @@ depuis un conteneur avec `host.docker.internal`, et non avec `localhost` ou
    transport, authentification et source du projet.
 5. Enregistrer, puis vérifier que LiteLLM découvre les outils.
 
+Pour corriger un serveur MCP mal configuré, préférer le **supprimer et le
+recréer** plutôt que le modifier : sur les versions de LiteLLM testées,
+l'édition d'un serveur existant échoue parfois avec une erreur Prisma
+(`data.credentials`) alors que la création fonctionne normalement.
+
 La configuration MCP se fait dans LiteLLM. OpenWebUI sert d'interface de
 conversation et ne doit pas recevoir les clés des services raccordés.
 

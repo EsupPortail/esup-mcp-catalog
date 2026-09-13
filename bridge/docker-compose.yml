@@ -6,3 +6,14 @@ services:
       - "${MCP_BRIDGE_PORT:-8090}:8090"
     env_file:
       - .env.bridge
+
+  # Optionnel : serveur MCP Grist auto-hebergé, joignable par le bridge sous
+  # http://grist-mcp:8000/mcp. A retirer si un serveur Grist est deja fourni
+  # par l'etablissement.
+  grist-mcp:
+    build: ./grist-mcp
+    restart: unless-stopped
+    ports:
+      - "${GRIST_MCP_PORT:-8000}:8000"
+    env_file:
+      - .env.grist

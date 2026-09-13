@@ -53,7 +53,7 @@ Le bridge accepte les serveurs Streamable HTTP. Exemple :
   },
   "grist": {
     "transport": "streamable-http",
-    "url": "http://host.docker.internal:8000/mcp"
+    "url": "http://grist-mcp:8000/mcp"
   }
 }
 ```
@@ -63,3 +63,21 @@ chaque modification de `.env.bridge`.
 
 Le bridge ne stocke pas les cles des services dans le depot. Les droits
 restent ceux du serveur MCP cible ; commencez par des serveurs en lecture seule.
+
+## Serveur MCP Grist auto-heberge (optionnel)
+
+Le `docker-compose.yml` inclut un service `grist-mcp` qui lance
+`mcp-server-grist` en Streamable HTTP, joignable par le bridge sous
+`http://grist-mcp:8000/mcp`. Son port est aussi publie sur l'hote
+(`http://host.docker.internal:8000/mcp`) pour qu'un autre service, comme
+LiteLLM, puisse s'y connecter.
+
+```bash
+cp .env.grist.example .env.grist
+chmod 600 .env.grist
+# renseigner GRIST_API_KEY dans .env.grist
+docker compose up -d
+```
+
+Retirer le service `grist-mcp` du `docker-compose.yml` si un serveur MCP
+Grist est deja fourni par l'etablissement.

@@ -46,12 +46,11 @@ configuration de l'instance Grist reste la même dans les deux cas. Pour la
 configuration par défaut avec LiteLLM, utiliser l'URL Streamable HTTP du
 serveur MCP fourni par l'établissement.
 
-Si l'établissement lance lui-même ce processus MCP sur le poste local, il peut
-exposer :
-
-```text
-http://127.0.0.1:8000/mcp
-```
+Pour un déploiement local, le [bridge](../../bridge/README.md) inclut un
+service Docker `grist-mcp` qui lance ce serveur automatiquement (voir
+`bridge/docker-compose.yml`), joignable sous `http://127.0.0.1:8000/mcp`
+depuis le Mac et `http://grist-mcp:8000/mcp` depuis les autres conteneurs du
+bridge.
 
 Dans LiteLLM, ouvrir **MCP Servers > Add New MCP Server** et renseigner :
 
@@ -60,8 +59,17 @@ Dans LiteLLM, ouvrir **MCP Servers > Add New MCP Server** et renseigner :
 | Nom | `grist` |
 | MCP Server URL / Server URL | l'URL MCP du serveur Grist |
 | Transport | **Streamable HTTP** |
-| Authentification | **API Key** |
-| Valeur d'authentification | la clé API Grist, dans le champ secret |
+| Authentification | selon le déploiement, voir ci-dessous |
+
+Deux cas selon qui héberge le serveur MCP Grist :
+
+- **Serveur partagé par l'établissement** : l'authentification se fait par clé
+  transmise à chaque appel. Choisir **API Key** et coller la clé API Grist
+  dans le champ secret.
+- **Serveur lancé localement** (service `grist-mcp` du bridge, `GRIST_API_KEY`
+  dans son propre environnement) : le serveur porte déjà la clé, aucune
+  authentification supplémentaire n'est nécessaire côté LiteLLM. Choisir
+  **aucune**.
 
 Ne pas renseigner le champ **GitHub / Source URL** : sur certaines builds de
 LiteLLM (`main-latest`), ce champ envoie un attribut `source_url` que le
@@ -69,10 +77,10 @@ schéma de la base ne connaît pas encore, ce qui bloque la création avec
 l'erreur `Could not find field at createOneLiteLLM_MCPServerTable.data.source_url`.
 Laisser le champ vide pour contourner le problème.
 
-Avec Docker Desktop, si le processus MCP Grist est lancé sur le Mac, saisir
-`http://host.docker.internal:8000/mcp` dans LiteLLM. Le serveur écoute alors
-sur `http://127.0.0.1:8000/mcp` côté Mac. Ne pas saisir `localhost` dans
-LiteLLM, car il désignerait le conteneur LiteLLM.
+Avec Docker Desktop, si le serveur MCP Grist tourne sur le Mac (service
+`grist-mcp` du bridge ou processus local), saisir
+`http://host.docker.internal:8000/mcp` dans LiteLLM. Ne pas saisir
+`localhost`, car il désignerait le conteneur LiteLLM lui-même.
 
 Le transport SSE est déprécié par le projet Grist et ne doit pas être choisi
 pour une nouvelle installation. Pour le mode STDIO, consulter la
