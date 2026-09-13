@@ -95,6 +95,13 @@ les fiches liées plus haut. Elles couvrent la découverte des outils, les
 lectures de test, les confirmations avant écriture et la protection des
 secrets.
 
+## Cas d'usage démontrés
+
+- [Importer des données data.gouv.fr dans Grist](docs/cas-usage-datagouv-grist.md) :
+  combine les deux connecteurs sur une seule demande en langage naturel.
+  Documente aussi les limites rencontrées (le modèle n'enchaîne pas les
+  outils sans aide) et les réglages qui ont permis de les dépasser.
+
 ## Feuille de route
 
 - ajouter le catalogue validé au bridge ;
@@ -103,7 +110,11 @@ secrets.
 - limiter les outils Grist exposés selon le profil ;
 - ajouter healthchecks, timeouts, limites de résultats et audit ;
 - tester la configuration Docker et les connexions MCP sans secret réel ;
-- évaluer progressivement les candidats du catalogue selon leur API et leur niveau de risque.
+- évaluer progressivement les candidats du catalogue selon leur API et leur niveau de risque ;
+- réduire la dépendance à l'enchaînement d'outils du modèle sur les tâches
+  multi-connecteurs (system prompt dédié, déjà testé, ou outil composite
+  côté bridge qui exécute un pipeline complet en un seul appel — voir le
+  [cas d'usage data.gouv.fr → Grist](docs/cas-usage-datagouv-grist.md)).
 
 ## Glossaire
 

@@ -61,6 +61,11 @@ Le bridge accepte les serveurs Streamable HTTP. Exemple :
 Les URL et les outils sont interroges au demarrage. Redemarrez le bridge apres
 chaque modification de `.env.bridge`.
 
+Si un serveur MCP redemarre pendant que le bridge tourne, sa session
+devient invalide cote bridge. Le premier appel suivant echoue (502), le
+bridge se reconnecte automatiquement, et l'appel suivant fonctionne sans
+intervention manuelle.
+
 Le bridge ne stocke pas les cles des services dans le depot. Les droits
 restent ceux du serveur MCP cible ; commencez par des serveurs en lecture seule.
 

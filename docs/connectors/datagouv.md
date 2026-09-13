@@ -81,3 +81,7 @@ pour distinguer ces deux étapes.
   publiée et que son format est pris en charge.
 - Pour un serveur local, vérifier `MCP_HOST`, `MCP_PORT`, `DATAGOUV_API_ENV`,
   `LOG_LEVEL` et le chemin `/mcp`.
+- Si le modèle décrit une procédure manuelle au lieu d'utiliser les outils
+  sur une demande qui combine plusieurs étapes (par exemple exporter des
+  données vers un autre connecteur), voir le [cas d'usage combiné avec
+  Grist](../cas-usage-datagouv-grist.md).

@@ -129,3 +129,12 @@ la clé API Grist limite ce que le connecteur peut faire.
   `127.0.0.1` par `host.docker.internal` dans l'URL saisie dans LiteLLM.
 - Si une action est refusée, vérifier les droits de la clé et la règle de
   confirmation du bridge.
+- `id` est un nom de colonne réservé par Grist (identifiant de ligne
+  généré automatiquement) : une insertion (`add_grist_records`) contenant
+  une colonne `id` échoue avec `Invalid column "id"`. Renommer ou retirer
+  cette colonne dans les données à insérer avant l'appel.
+- Si le modèle décrit une procédure manuelle ou un script au lieu
+  d'appeler les outils, voir le [cas d'usage combiné avec
+  data.gouv.fr](../cas-usage-datagouv-grist.md) : un system prompt dédié
+  et le mode Function Calling natif d'OpenWebUI corrigent ce
+  comportement.

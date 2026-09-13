@@ -19,6 +19,15 @@ Avant de commencer :
 - les secrets sont conservés dans l'environnement ou un gestionnaire de
   secrets, jamais dans le dépôt, les journaux ou les conversations.
 
+Utiliser une image LiteLLM sur un tag stable et épinglé (par exemple
+`ghcr.io/berriai/litellm:v1.83.7-stable` ou plus récent), pas
+`main-latest` : ce tag évolue en continu et certaines de ses versions ont
+un bug interne (schéma Prisma désynchronisé du code) qui bloque la
+création ou l'édition d'un serveur MCP avec une erreur `Could not find
+field` ou `MissingRequiredValueError`. Si l'erreur apparaît malgré un tag
+stable, réessayer avec le tag stable suivant plutôt que de chercher un
+correctif applicatif.
+
 Pour une stack Docker Desktop, un serveur MCP lancé sur le Mac est accessible
 depuis un conteneur avec `host.docker.internal`, et non avec `localhost` ou
 `127.0.0.1`. La fiche du connecteur indique l'URL à utiliser.
@@ -95,6 +104,30 @@ qui échoue en 404.
 Enregistrer, puis vérifier que les outils découverts apparaissent dans la
 liste des outils. Le bridge doit être redémarré après toute modification de
 `.env.bridge`.
+
+En copiant la clé API depuis un fichier ou un terminal, vérifier qu'elle
+n'est pas tronquée (fin de ligne coupée à l'affichage) : une clé
+incomplète produit une erreur 401 côté bridge qui ressemble, dans la
+réponse du modèle, à un problème d'authentification chez le fournisseur
+de données plutôt que sur le bridge lui-même.
+
+## Fiabiliser l'usage des outils par le modèle
+
+Un modèle peut appeler les outils correctement pour une demande simple et
+pourtant échouer sur une demande qui combine plusieurs outils : il
+n'enchaîne pas toujours les appels tout seul et peut décrire une
+procédure manuelle ou halluciner un script au lieu de continuer à utiliser
+les outils disponibles. Deux réglages, faits dans OpenWebUI sur la fiche
+du modèle (**Workspace > Modèles**), réduisent nettement ce risque :
+
+1. **Function Calling** (paramètres avancés) : passer de `Default` à
+   `Native`.
+2. **System Prompt** : écrire explicitement la procédure attendue pour
+   les tâches récurrentes plutôt qu'une instruction générique.
+
+Voir le [cas d'usage combiné data.gouv.fr → Grist](cas-usage-datagouv-grist.md)
+pour un exemple complet, avec le system prompt qui a fonctionné et les
+limites rencontrées.
 
 ## Vérifier le chemin MCP
 
