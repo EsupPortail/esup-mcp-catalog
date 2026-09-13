@@ -97,12 +97,16 @@ pour distinguer ces deux étapes.
 
    > Ajoute une ligne de test dans cette table Grist.
 
-   L'action doit être refusée ou soumise à une confirmation explicite selon la
-   politique configurée. Ne tester une écriture que dans un document dédié.
+   Le bridge actuel ne demande pas de confirmation avant d'écrire : l'action
+   s'exécute directement si la clé API Grist le permet. Ne tester une écriture
+   que dans un document Grist dédié et jetable, avec une clé dont les droits
+   sont limités à ce document.
 
 Les créations, modifications, suppressions, imports, changements de droits,
-téléversements et webhooks doivent être autorisés par le bridge, confirmés par
-l'utilisateur et journalisés sans clé ni contenu sensible.
+téléversements et webhooks devront être autorisés par le bridge, confirmés par
+l'utilisateur et journalisés sans clé ni contenu sensible : ce contrôle n'est
+pas encore construit (voir feuille de route). Tant qu'il ne l'est pas, seule
+la clé API Grist limite ce que le connecteur peut faire.
 
 ## Limites et dépannage
 

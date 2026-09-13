@@ -32,7 +32,7 @@ flowchart LR
     AB --> A[Autorisations, confirmations et audit]
 ```
 
-Le bridge conserve les règles d'accès, les confirmations humaines et l'audit. Les secrets ne doivent jamais être envoyés à OpenWebUI, au modèle, dans les logs ou dans Git.
+Le bridge actuel relaie les appels vers les serveurs MCP configurés ; il ne vérifie pas encore les droits par utilisateur et ne demande pas de confirmation avant une action sensible (voir feuille de route). En attendant, n'activer un connecteur en écriture qu'avec une clé dont les droits sont déjà limités à ce qui est autorisé. Les secrets ne doivent jamais être envoyés à OpenWebUI, au modèle, dans les logs ou dans Git.
 
 ## Serveurs MCP du POC
 
@@ -112,7 +112,7 @@ secrets.
 - **MCP** (*Model Context Protocol*) : protocole ouvert qui décrit la manière de présenter des outils et des données à un assistant IA.
 - **Serveur MCP** : connecteur qui traduit les demandes de l'assistant en appels compréhensibles par une application, et qui renvoie les résultats à l'assistant.
 - **Connecteur** : autre nom donné à un serveur MCP lorsqu'on insiste sur son rôle de liaison avec une application.
-- **Bridge** : composant intermédiaire qui choisit les connecteurs utilisables, vérifie les droits et demande une confirmation avant une action sensible.
+- **Bridge** : composant intermédiaire qui relaie les demandes de l'assistant vers les serveurs MCP activés. Le choix des connecteurs, la vérification des droits et la confirmation avant une action sensible sont prévus mais pas encore construits (voir feuille de route).
 - **Endpoint** : adresse précise à laquelle un service est joignable, par exemple `https://mcp.data.gouv.fr/mcp`.
 - **Transport** : manière dont le client et le serveur échangent leurs messages. `Streamable HTTP` utilise une connexion web ; `STDIO` utilise les entrées et sorties d'un programme lancé localement.
 - **LiteLLM** : composant qui relaie les demandes entre MyIA et le modèle Mistral, et qui peut aussi déclarer des serveurs MCP.
