@@ -62,7 +62,12 @@ Dans LiteLLM, ouvrir **MCP Servers > Add New MCP Server** et renseigner :
 | Transport | **Streamable HTTP** |
 | Authentification | **API Key** |
 | Valeur d'authentification | la clé API Grist, dans le champ secret |
-| GitHub / Source URL | `https://github.com/nic01asFr/mcp-server-grist` |
+
+Ne pas renseigner le champ **GitHub / Source URL** : sur certaines builds de
+LiteLLM (`main-latest`), ce champ envoie un attribut `source_url` que le
+schéma de la base ne connaît pas encore, ce qui bloque la création avec
+l'erreur `Could not find field at createOneLiteLLM_MCPServerTable.data.source_url`.
+Laisser le champ vide pour contourner le problème.
 
 Avec Docker Desktop, si le processus MCP Grist est lancé sur le Mac, saisir
 `http://host.docker.internal:8000/mcp` dans LiteLLM. Le serveur écoute alors

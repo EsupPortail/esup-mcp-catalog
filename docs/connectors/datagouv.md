@@ -37,7 +37,12 @@ Dans LiteLLM, ouvrir **MCP Servers > Add New MCP Server** et renseigner :
 | MCP Server URL / Server URL | `https://mcp.data.gouv.fr/mcp` |
 | Transport | **Streamable HTTP** |
 | Authentification | aucune |
-| GitHub / Source URL | `https://github.com/datagouv/datagouv-mcp` |
+
+Ne pas renseigner le champ **GitHub / Source URL** : sur certaines builds de
+LiteLLM (`main-latest`), ce champ envoie un attribut `source_url` que le
+schéma de la base ne connaît pas encore, ce qui bloque la création avec
+l'erreur `Could not find field at createOneLiteLLM_MCPServerTable.data.source_url`.
+Laisser le champ vide pour contourner le problème.
 
 Enregistrer, puis vérifier que les outils sont découverts. Le transport utilisé
 est Streamable HTTP ; une installation locale relève de la documentation du

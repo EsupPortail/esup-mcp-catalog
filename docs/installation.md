@@ -35,10 +35,14 @@ depuis un conteneur avec `host.docker.internal`, et non avec `localhost` ou
 La configuration MCP se fait dans LiteLLM. OpenWebUI sert d'interface de
 conversation et ne doit pas recevoir les clés des services raccordés.
 
-La déclaration dans LiteLLM est enregistrée dans sa base de données. OpenWebUI
-reste connecté à LiteLLM comme fournisseur de modèle, mais la stack actuelle
-ne transmet pas automatiquement les outils MCP aux conversations. LiteLLM peut
-donc découvrir les outils sans qu'OpenWebUI puisse encore les appeler.
+La déclaration dans LiteLLM est enregistrée dans sa base de données. Pour
+utiliser les outils dans OpenWebUI, lancer également le
+[bridge MCP vers OpenAPI](../bridge/README.md), puis l'ajouter dans la page
+**Admin > Settings > Tools** d'OpenWebUI.
+
+Le bridge utilise sa propre liste de serveurs dans `.env.bridge` ; il ne lit pas
+automatiquement les serveurs enregistrés dans LiteLLM. Il faut donc conserver
+les mêmes URLs MCP dans cette configuration.
 
 ## Vérifier OpenWebUI
 
@@ -59,17 +63,41 @@ Après le démarrage :
    accessible et que le modèle configuré est disponible.
 4. Ouvrir une nouvelle conversation et sélectionner ce modèle.
 
+## Ajouter le bridge dans OpenWebUI
+
+Depuis le dossier `bridge` :
+
+```bash
+cp .env.bridge.example .env.bridge
+chmod 600 .env.bridge
+docker compose up -d
+```
+
+Dans **Admin > Settings > Tools > Add connection**, renseigner :
+
+| Champ | Valeur |
+|---|---|
+| Type | OpenAPI |
+| Nom d'utilisateur | `MCP Catalog` |
+| URL | `http://host.docker.internal:8090/openapi.json` |
+| Auth | Bearer |
+| Clé API | la valeur de `BRIDGE_API_KEY` dans `.env.bridge` |
+
+Enregistrer, puis vérifier que les outils découverts apparaissent dans la
+liste des outils. Le bridge doit être redémarré après toute modification de
+`.env.bridge`.
+
 ## Vérifier le chemin MCP
 
 Après l'enregistrement dans LiteLLM :
 
 1. vérifier dans LiteLLM que le serveur est joignable et que ses outils sont
    découverts ;
-2. vérifier dans OpenWebUI que le modèle configuré répond correctement.
-
-Avec la configuration actuelle, ce contrôle confirme la connexion au modèle et
-la découverte des outils dans LiteLLM, mais pas encore l'appel d'un outil MCP
-depuis une conversation OpenWebUI.
+2. vérifier dans le bridge que les outils sont visibles sur
+   `http://127.0.0.1:8090/openapi.json` ;
+3. vérifier dans OpenWebUI que les outils du bridge apparaissent ;
+4. ouvrir une conversation et effectuer une demande de lecture décrite dans la
+   fiche du connecteur.
 
 ## Tester et sécuriser
 

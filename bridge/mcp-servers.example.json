@@ -1,0 +1,10 @@
+{
+  "datagouv": {
+    "transport": "streamable-http",
+    "url": "https://mcp.data.gouv.fr/mcp"
+  },
+  "grist": {
+    "transport": "streamable-http",
+    "url": "${GRIST_MCP_URL}"
+  }
+}
