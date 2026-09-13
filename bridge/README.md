@@ -15,6 +15,18 @@ Depuis ce repertoire :
 ```bash
 cp .env.bridge.example .env.bridge
 chmod 600 .env.bridge
+```
+
+Editer `.env.bridge` avant de demarrer :
+
+- remplacer `BRIDGE_API_KEY` par une valeur generee avec
+  `python3 -c "import secrets; print(secrets.token_urlsafe(32))"` ;
+- ajuster `MCP_SERVERS_JSON` pour ne garder que les serveurs MCP reellement
+  utilises.
+
+Puis demarrer :
+
+```bash
 docker compose up -d
 ```
 
@@ -23,7 +35,9 @@ aux outils.
 
 ## Connexion OpenWebUI
 
-Dans **Admin > Settings > Tools > Add connection** :
+Dans **Panneau d'administration > Réglages > Intégrations > Gérer les
+serveurs d'outils** (nommé *Tools > Add connection* dans les versions plus
+anciennes d'OpenWebUI), ajouter une connexion :
 
 | Champ | Valeur |
 |---|---|
@@ -32,6 +46,11 @@ Dans **Admin > Settings > Tools > Add connection** :
 | URL | `http://host.docker.internal:8090` |
 | Auth | Bearer |
 | Cle API | la valeur de `BRIDGE_API_KEY` |
+
+Le champ "Nom d'utilisateur" est un intitule trompeur d'OpenWebUI (chaine
+generique reutilisee sur ce formulaire) : c'est en realite le nom de la
+connexion, pas un identifiant de compte. Y mettre n'importe quel nom
+descriptif.
 
 Depuis un OpenWebUI lance dans Docker Desktop, `host.docker.internal` designe
 le Mac hote. Si OpenWebUI et le bridge sont places sur le meme reseau Docker,

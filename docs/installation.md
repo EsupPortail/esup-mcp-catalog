@@ -52,7 +52,7 @@ conversation et ne doit pas recevoir les clés des services raccordés.
 La déclaration dans LiteLLM est enregistrée dans sa base de données. Pour
 utiliser les outils dans OpenWebUI, lancer également le
 [bridge MCP vers OpenAPI](../bridge/README.md), puis l'ajouter dans la page
-**Admin > Settings > Tools** d'OpenWebUI.
+**Panneau d'administration > Réglages > Intégrations** d'OpenWebUI.
 
 Le bridge utilise sa propre liste de serveurs dans `.env.bridge` ; il ne lit pas
 automatiquement les serveurs enregistrés dans LiteLLM. Il faut donc conserver
@@ -73,8 +73,8 @@ Après le démarrage :
 2. Si l'inscription est désactivée, passer temporairement `ENABLE_SIGNUP` à
    `"true"`, redémarrer OpenWebUI, créer le premier compte administrateur,
    puis repasser `ENABLE_SIGNUP` à `"false"`.
-3. Dans **Admin Panel > Settings > Connections**, vérifier que LiteLLM est
-   accessible et que le modèle configuré est disponible.
+3. Dans **Panneau d'administration > Réglages > Connexions**, vérifier que
+   LiteLLM est accessible et que le modèle configuré est disponible.
 4. Ouvrir une nouvelle conversation et sélectionner ce modèle.
 
 ## Ajouter le bridge dans OpenWebUI
@@ -84,10 +84,20 @@ Depuis le dossier `bridge` :
 ```bash
 cp .env.bridge.example .env.bridge
 chmod 600 .env.bridge
+```
+
+Éditer `.env.bridge` avant de démarrer : remplacer `BRIDGE_API_KEY` par une
+valeur générée (`python3 -c "import secrets; print(secrets.token_urlsafe(32))"`)
+et ajuster `MCP_SERVERS_JSON` selon les connecteurs réellement utilisés.
+Voir le [README du bridge](../bridge/README.md) pour le détail.
+
+```bash
 docker compose up -d
 ```
 
-Dans **Admin > Settings > Tools > Add connection**, renseigner :
+Dans **Panneau d'administration > Réglages > Intégrations > Gérer les
+serveurs d'outils** (nommé *Tools > Add connection* dans les versions plus
+anciennes d'OpenWebUI), ajouter une connexion et renseigner :
 
 | Champ | Valeur |
 |---|---|
@@ -96,6 +106,11 @@ Dans **Admin > Settings > Tools > Add connection**, renseigner :
 | URL | `http://host.docker.internal:8090` |
 | Auth | Bearer |
 | Clé API | la valeur de `BRIDGE_API_KEY` dans `.env.bridge` |
+
+Le champ « Nom d'utilisateur » est un intitulé trompeur d'OpenWebUI
+(chaîne générique réutilisée sur ce formulaire) : c'est en réalité le nom
+de la connexion, pas un identifiant de compte. Y mettre n'importe quel nom
+descriptif.
 
 Ne pas ajouter `/openapi.json` à la fin de l'URL : OpenWebUI l'ajoute lui-même.
 Le mettre quand même produit une requête vers `.../openapi.json/openapi.json`,
@@ -117,13 +132,17 @@ Un modèle peut appeler les outils correctement pour une demande simple et
 pourtant échouer sur une demande qui combine plusieurs outils : il
 n'enchaîne pas toujours les appels tout seul et peut décrire une
 procédure manuelle ou halluciner un script au lieu de continuer à utiliser
-les outils disponibles. Deux réglages, faits dans OpenWebUI sur la fiche
-du modèle (**Workspace > Modèles**), réduisent nettement ce risque :
+les outils disponibles. Deux réglages, faits dans **Espace de travail >
+Modèles** (icône en haut de la barre latérale, à ne pas confondre avec
+l'onglet *Modèles* du panneau d'administration, qui gère la visibilité des
+modèles) en éditant la fiche du modèle utilisé, réduisent nettement ce
+risque :
 
-1. **Function Calling** (paramètres avancés) : passer de `Default` à
-   `Native`.
-2. **System Prompt** : écrire explicitement la procédure attendue pour
-   les tâches récurrentes plutôt qu'une instruction générique.
+1. **Réglages avancés > Appel de fonction** (*Function Calling*) : passer
+   de `Par défaut` à `Natif`.
+2. **Prompt système** (*System Prompt*) : écrire explicitement la
+   procédure attendue pour les tâches récurrentes plutôt qu'une
+   instruction générique.
 
 Voir le [cas d'usage combiné data.gouv.fr → Grist](cas-usage-datagouv-grist.md)
 pour un exemple complet, avec le system prompt qui a fonctionné et les

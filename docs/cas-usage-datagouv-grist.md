@@ -52,16 +52,17 @@ continuer à utiliser les outils disponibles.
 
 ## Ajustements qui ont fonctionné
 
-Deux réglages, faits côté OpenWebUI (**Workspace > Modèles**, éditer le
-modèle utilisé), ont nettement amélioré la fiabilité :
+Deux réglages, faits côté OpenWebUI dans **Espace de travail > Modèles**
+(éditer le modèle utilisé — écran distinct de l'onglet *Modèles* du
+panneau d'administration), ont nettement amélioré la fiabilité :
 
-**1. Function Calling en mode natif**
+**1. Appel de fonction en mode natif**
 
-Dans les paramètres avancés du modèle, passer *Function Calling* de
-`Default` (le modèle simule l'appel via du texte, peu fiable) à `Native`
-(appel réel via l'API function-calling du modèle).
+Dans **Réglages avancés**, passer *Appel de fonction* (*Function Calling*)
+de `Par défaut` (le modèle simule l'appel via du texte, peu fiable) à
+`Natif` (appel réel via l'API function-calling du modèle).
 
-**2. Un system prompt qui écrit la procédure à l'avance**
+**2. Un prompt système qui écrit la procédure à l'avance**
 
 Un prompt générique ("utilise les outils disponibles") ne suffit pas. Ce
 qui a fonctionné, c'est d'écrire la recette complète pour ce type de
