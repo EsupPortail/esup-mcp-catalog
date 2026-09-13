@@ -29,13 +29,17 @@ Dans **Admin > Settings > Tools > Add connection** :
 |---|---|
 | Type | OpenAPI |
 | Nom d'utilisateur | `MCP Catalog` |
-| URL | `http://host.docker.internal:8090/openapi.json` |
+| URL | `http://host.docker.internal:8090` |
 | Auth | Bearer |
 | Cle API | la valeur de `BRIDGE_API_KEY` |
 
 Depuis un OpenWebUI lance dans Docker Desktop, `host.docker.internal` designe
 le Mac hote. Si OpenWebUI et le bridge sont places sur le meme reseau Docker,
-utilisez plutot `http://mcp-openapi-bridge:8090/openapi.json`.
+utilisez plutot `http://mcp-openapi-bridge:8090`.
+
+Ne pas ajouter `/openapi.json` a la fin de l'URL : OpenWebUI l'ajoute lui-meme.
+Le mettre quand meme produit une requete vers `.../openapi.json/openapi.json`,
+qui echoue en 404.
 
 ## Configuration MCP
 

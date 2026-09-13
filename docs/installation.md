@@ -79,9 +79,13 @@ Dans **Admin > Settings > Tools > Add connection**, renseigner :
 |---|---|
 | Type | OpenAPI |
 | Nom d'utilisateur | `MCP Catalog` |
-| URL | `http://host.docker.internal:8090/openapi.json` |
+| URL | `http://host.docker.internal:8090` |
 | Auth | Bearer |
 | Clé API | la valeur de `BRIDGE_API_KEY` dans `.env.bridge` |
+
+Ne pas ajouter `/openapi.json` à la fin de l'URL : OpenWebUI l'ajoute lui-même.
+Le mettre quand même produit une requête vers `.../openapi.json/openapi.json`,
+qui échoue en 404.
 
 Enregistrer, puis vérifier que les outils découverts apparaissent dans la
 liste des outils. Le bridge doit être redémarré après toute modification de
