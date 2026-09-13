@@ -36,62 +36,28 @@ Le bridge conserve les règles d'accès, les confirmations humaines et l'audit. 
 
 ## Serveurs MCP du POC
 
-Le POC teste deux façons d'ajouter une capacité à l'assistant : consulter des données publiques avec data.gouv.fr et travailler avec des données structurées dans Grist. Le premier serveur est déjà hébergé ; le second doit être configuré avec l'instance Grist de l'établissement.
+Le POC propose deux connecteurs :
 
-### data.gouv.fr
+| Connecteur | Usage principal | Accès |
+|---|---|---|
+| data.gouv.fr | Rechercher et consulter des données publiques | Serveur public, lecture seule |
+| Grist / La Suite numérique | Consulter des données structurées et, si autorisé, les modifier | Instance Grist de l'établissement, clé dédiée |
 
-- Dépôt : `https://github.com/datagouv/datagouv-mcp`
-- Instance publique : `https://mcp.data.gouv.fr/mcp`
-- Transport : Streamable HTTP uniquement
-- Authentification de l'instance publique : aucune clé requise
-- Nature : lecture seule
-- Variables d'un déploiement local : `MCP_HOST`, `MCP_PORT`, `DATAGOUV_API_ENV`, `LOG_LEVEL`
-
-Les outils permettent notamment de rechercher des jeux de données, des organismes et des services, puis de consulter leurs informations et leurs ressources. Ils sont en lecture seule. Les résultats provenant d'Internet doivent être considérés comme des informations à vérifier, et non comme des instructions à suivre.
-
-Configuration de référence pour un client MCP HTTP :
-
-```json
-{
-  "url": "https://mcp.data.gouv.fr/mcp",
-  "type": "http"
-}
-```
-
-### Grist / La Suite numérique
-
-- Dépôt : `https://github.com/nic01asFr/mcp-server-grist`
-- Transports documentés : STDIO et Streamable HTTP ; SSE est déprécié
-- Secret obligatoire : `GRIST_API_KEY`
-- Variable optionnelle : `GRIST_API_URL`
-- Valeur par défaut documentée : `https://docs.getgrist.com/api`
-- HTTP local documenté : `127.0.0.1:8000/mcp`
-
-Le serveur permet de parcourir les espaces et documents, consulter ou interroger des données, et, selon les droits accordés, créer ou modifier des éléments. Toute création, modification, suppression, import ou requête avancée doit faire l'objet d'une autorisation et d'une confirmation adaptées.
-
-Exemple STDIO avec `uvx` :
-
-```json
-{
-  "command": "uvx",
-  "args": ["mcp-server-grist"],
-  "env": {
-    "GRIST_API_KEY": "${GRIST_API_KEY}",
-    "GRIST_API_URL": "https://docs.getgrist.com/api"
-  }
-}
-```
-
-Ne remplacez jamais `${GRIST_API_KEY}` par une valeur réelle dans un fichier versionné.
-
-## Documentation des connecteurs
-
-Le parcours complet d'ajout, de test, d'activation et de retrait est décrit dans le [guide d'installation](docs/installation.md).
-
-Chaque connecteur dispose d'une fiche qui décrit son rôle, son installation, ses capacités, ses permissions, son premier test et son dépannage :
+Les procédures, exemples de demandes, paramètres LiteLLM, tests et limites sont
+regroupés dans les fiches dédiées :
 
 - [Connecteur data.gouv.fr](docs/connectors/datagouv.md) ;
 - [Connecteur Grist](docs/connectors/grist.md).
+
+Le [guide d'installation](docs/installation.md) décrit le parcours commun dans
+LiteLLM et OpenWebUI. Les secrets ne doivent jamais être inscrits dans ce
+dépôt.
+
+## Documentation des connecteurs
+
+Le parcours commun d'ajout, de test et de retrait est décrit dans le [guide
+d'installation](docs/installation.md). Les fiches liées ci-dessus portent les
+réglages et les exemples propres à chaque connecteur.
 
 Le catalogue et les manifestes YAML associés sont disponibles ici :
 
@@ -106,30 +72,6 @@ Le POC se limite à data.gouv.fr et Grist. D'autres connecteurs pourront être �
 Les applications manipulant des données sensibles nécessiteront une analyse RGPD et sécurité dédiée avant toute intégration. Les fonctions d'authentification multifacteur et les envois massifs ne font pas partie des usages visés.
 
 Le catalogue n'est pas une liste d'intégrations disponibles : chaque connecteur devra être évalué, documenté, versionné et validé avant d'être proposé aux établissements.
-
-## Configuration MyIA
-
-Le bridge peut enregistrer les deux serveurs dans son catalogue :
-
-```yaml
-servers:
-  datagouv:
-    repository: https://github.com/datagouv/datagouv-mcp
-    transport: streamable-http
-    url: https://mcp.data.gouv.fr/mcp
-    read_only: true
-  grist:
-    repository: https://github.com/nic01asFr/mcp-server-grist
-    transport: stdio
-    command: uvx
-    args: [mcp-server-grist]
-    env:
-      GRIST_API_KEY: ${GRIST_API_KEY}
-      GRIST_API_URL: ${GRIST_API_URL:-https://docs.getgrist.com/api}
-    confirmation_required: all_mutations
-```
-
-En production, épinglez les versions ou commits des dépendances, utilisez un gestionnaire de secrets et limitez les destinations réseau. Pour le mode HTTP, utilisez `127.0.0.1` en local et un reverse proxy HTTPS avec contrôle d'origine en exposition distante.
 
 ## Déploiement cible
 
@@ -148,10 +90,10 @@ Le catalogue a vocation à être communautaire. Chaque module devra documenter s
 
 ## Vérifications du POC
 
-1. Vérifier la connexion à `https://mcp.data.gouv.fr/mcp` et appeler uniquement un outil de lecture.
-2. Configurer Grist avec une clé dédiée et tester d'abord `list_organizations`, `list_workspaces` et `list_documents`.
-3. Vérifier que les opérations Grist mutantes sont bloquées sans confirmation explicite.
-4. Vérifier que les clés et les réponses sensibles n'apparaissent ni dans les logs ni dans les commits.
+Les vérifications détaillées et les exemples de demandes sont regroupés dans
+les fiches liées plus haut. Elles couvrent la découverte des outils, les
+lectures de test, les confirmations avant écriture et la protection des
+secrets.
 
 ## Feuille de route
 

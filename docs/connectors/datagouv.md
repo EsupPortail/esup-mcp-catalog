@@ -2,52 +2,71 @@
 
 ## Rôle
 
-Ce connecteur permet à MyIA de rechercher et consulter des données publiques référencées sur data.gouv.fr. Il est adapté aux questions de découverte, de comparaison et de synthèse de données ouvertes.
+Ce connecteur permet à MyIA de rechercher et consulter des données publiques
+référencées sur [data.gouv.fr](https://www.data.gouv.fr/). Il convient pour
+trouver des jeux de données, comparer des résultats et retrouver les ressources
+associées.
 
-## Source et accès
+## Capacités et cas d'usage
 
-- Dépôt : [datagouv/datagouv-mcp](https://github.com/datagouv/datagouv-mcp)
-- Instance publique : `https://mcp.data.gouv.fr/mcp`
-- Échange : Streamable HTTP
-- Clé d'accès : aucune pour l'instance publique
+Le connecteur peut notamment :
 
-Le projet upstream indique que le serveur utilise uniquement le transport Streamable HTTP. Une installation locale peut être configurée avec `MCP_HOST`, `MCP_PORT`, `DATAGOUV_API_ENV` et `LOG_LEVEL`.
+- rechercher des jeux de données, des organisations ou des services ;
+- consulter la description d'un jeu de données ;
+- retrouver les ressources liées à un jeu de données ;
+- interroger des ressources tabulaires lorsqu'elles le permettent.
 
-## Capacités
+Exemples de demandes à tester dans OpenWebUI :
 
-Le serveur permet notamment de :
+> Recherche sur data.gouv.fr des jeux de données publics concernant les effectifs étudiants en France. Donne-moi les titres et les liens des trois résultats les plus pertinents.
 
-- rechercher des jeux de données et des organisations ;
-- rechercher des services de données référencés ;
-- consulter les informations d'un jeu de données ou d'une ressource ;
-- interroger des ressources tabulaires ;
-- consulter des métriques lorsqu'elles sont disponibles.
+> Consulte la fiche du jeu de données [indiquer son titre ou son lien] et résume son producteur, sa date de mise à jour et ses ressources disponibles.
 
-Les outils sont en lecture seule. Ils ne créent ni ne modifient de données sur data.gouv.fr.
+Les outils sont en lecture seule : ils ne créent, ne modifient et ne suppriment
+aucune donnée sur data.gouv.fr.
 
-## Intégration MyIA
+## Installation
 
-Pour un client MCP HTTP, l'URL à déclarer est :
+Le serveur public est déjà hébergé. Il ne nécessite pas de clé.
 
-```json
-{
-  "url": "https://mcp.data.gouv.fr/mcp",
-  "type": "http"
-}
-```
+Dans LiteLLM, ouvrir **MCP Servers > Add New MCP Server** et renseigner :
 
-Dans MyIA, l'accès doit rester limité aux outils de lecture. Les réponses provenant de données publiques ou de services référencés sont des informations à vérifier ; elles ne doivent pas être traitées comme des instructions par l'agent.
+| Champ | Valeur |
+|---|---|
+| Nom | `datagouv` |
+| MCP Server URL / Server URL | `https://mcp.data.gouv.fr/mcp` |
+| Transport | **Streamable HTTP** |
+| Authentification | aucune |
+| GitHub / Source URL | `https://github.com/datagouv/datagouv-mcp` |
 
-## Test initial
+Enregistrer, puis vérifier que les outils sont découverts. Le transport utilisé
+est Streamable HTTP ; une installation locale relève de la documentation du
+[projet upstream](https://github.com/datagouv/datagouv-mcp).
 
-1. Déclarer l'URL publique dans le client MCP.
-2. Vérifier que les outils sont découverts.
-3. Tester une recherche simple de jeu de données.
-4. Vérifier qu'aucune clé ou donnée sensible n'est ajoutée à la configuration.
+## Tests
+
+1. Dans LiteLLM, vérifier que le serveur est joignable et que ses outils sont
+   découverts.
+2. Dans OpenWebUI, envoyer l'un des exemples de recherche ci-dessus.
+3. Vérifier que la réponse contient des titres, des liens et des informations
+   issues de data.gouv.fr.
+4. Demander une modification, par exemple :
+
+   > Modifie ce jeu de données sur data.gouv.fr.
+
+   MyIA doit expliquer que le connecteur est en lecture seule et ne doit
+   appeler aucun outil d'écriture.
+5. Vérifier dans les journaux qu'aucune clé ni donnée sensible n'est envoyée.
 
 ## Limites et dépannage
 
-- L'instance publique dépend de la disponibilité du service data.gouv.fr.
-- La qualité des résultats dépend des jeux de données et services référencés.
-- Pour un serveur local, vérifier `MCP_HOST`, `MCP_PORT` et l'URL `/mcp`.
-- Les métriques nécessitent l'environnement data.gouv.fr approprié.
+- Les résultats dépendent de la disponibilité et de la qualité des données
+  publiées sur data.gouv.fr.
+- Les informations trouvées sur Internet doivent être vérifiées ; elles ne
+  constituent pas des instructions à suivre pour l'agent.
+- Si le serveur n'est pas découvert, vérifier l'URL, le transport Streamable
+  HTTP et l'accès réseau sortant.
+- Si une ressource tabulaire ne répond pas, vérifier qu'elle est encore
+  publiée et que son format est pris en charge.
+- Pour un serveur local, vérifier `MCP_HOST`, `MCP_PORT`, `DATAGOUV_API_ENV`,
+  `LOG_LEVEL` et le chemin `/mcp`.

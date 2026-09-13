@@ -2,91 +2,99 @@
 
 ## Rôle
 
-Ce connecteur permet à MyIA de consulter et, si l'établissement l'autorise, de manipuler des données structurées dans Grist. Il correspond au premier connecteur envisagé pour les usages de La Suite numérique.
+Ce connecteur permet à MyIA de consulter des données structurées dans Grist
+et, si cela est autorisé, de créer ou modifier des éléments. Il est destiné
+aux usages de La Suite numérique.
 
-## Source et prérequis
+## Capacités et cas d'usage
 
-- Dépôt : [nic01asFr/mcp-server-grist](https://github.com/nic01asFr/mcp-server-grist)
-- Python : version 3.10 ou supérieure d'après le projet upstream
+Le connecteur peut notamment :
+
+- parcourir les organisations, espaces, documents et tables ;
+- consulter les colonnes et les enregistrements ;
+- effectuer des requêtes sur les données ;
+- selon les droits accordés, créer, modifier, supprimer ou exporter des
+  éléments, gérer des pièces jointes et des webhooks.
+
+Exemples de demandes à tester dans OpenWebUI :
+
+> Donne-moi la liste des organisations Grist auxquelles j'ai accès.
+
+> Dans l'espace [nom de l'espace], liste les documents disponibles puis indique les tables du document [nom du document].
+
+> Dans la table [nom de la table], affiche les cinq premiers enregistrements sans modifier les données.
+
+Les requêtes SQL et les actions d'écriture doivent être considérées comme
+potentiellement sensibles, même lorsqu'elles semblent simples.
+
+## Installation
+
+Préparer une clé API Grist dédiée au connecteur. La conserver dans
+l'environnement ou un gestionnaire de secrets, jamais dans le dépôt.
+
 - Clé obligatoire : `GRIST_API_KEY`
-- URL optionnelle : `GRIST_API_URL`
-- URL par défaut documentée : `https://docs.getgrist.com/api`
+- URL API facultative : `GRIST_API_URL`
+- URL par défaut : `https://docs.getgrist.com/api`
+- URL La Suite numérique : `https://grist.numerique.gouv.fr/api`
 
-Pour l'instance Grist de La Suite numérique, utiliser l'URL de base API `https://grist.numerique.gouv.fr/api`. Une URL d'interface contenant `/o/.../ws/...` identifie un espace dans le navigateur ; elle ne doit pas être utilisée comme base des appels API de ce serveur MCP.
+Ne pas utiliser l'URL d'une page Grist contenant `/o/.../ws/...` comme URL API.
 
-La clé doit être créée et conservée dans la configuration locale ou un gestionnaire de secrets. Elle ne doit jamais être écrite dans ce dépôt.
+Le serveur Grist peut fonctionner en STDIO ou en Streamable HTTP. Pour une
+déclaration dans LiteLLM, utiliser le mode Streamable HTTP et exposer le
+serveur local sur :
 
-## Choisir le transport
-
-### STDIO, recommandé en local
-
-Le client lance le serveur directement :
-
-```json
-{
-  "command": "uvx",
-  "args": ["mcp-server-grist"],
-  "env": {
-    "GRIST_API_KEY": "${GRIST_API_KEY}",
-    "GRIST_API_URL": "https://docs.getgrist.com/api"
-  }
-}
+```text
+http://127.0.0.1:8000/mcp
 ```
 
-### Streamable HTTP
-
-Le projet upstream documente un lancement local sur `127.0.0.1:8000` avec le chemin `/mcp`. Ce mode doit rester limité au réseau local pendant le POC. Toute exposition distante nécessite HTTPS, contrôle d'accès et validation de l'origine.
-
-Le transport SSE est déprécié dans le projet upstream et ne doit pas être choisi pour une nouvelle configuration.
-
-### Configuration via LiteLLM
-
-Dans **MCP Servers > Add New MCP Server**, renseigner :
+Dans LiteLLM, ouvrir **MCP Servers > Add New MCP Server** et renseigner :
 
 | Champ | Valeur |
 |---|---|
 | Nom | `grist` |
 | MCP Server URL / Server URL | l'URL MCP du serveur Grist |
-| Transport | Streamable HTTP |
-| Authentification | API Key |
-| Valeur d'authentification | la clé API Grist, saisie dans le champ secret |
+| Transport | **Streamable HTTP** |
+| Authentification | **API Key** |
+| Valeur d'authentification | la clé API Grist, dans le champ secret |
 | GitHub / Source URL | `https://github.com/nic01asFr/mcp-server-grist` |
 
-La clé ne doit pas apparaître dans les fichiers du catalogue ni dans les journaux. Pour un lancement local contrôlé par l'environnement du serveur, la variable `GRIST_API_KEY` reste l'alternative documentée.
+Avec Docker Desktop, si Grist MCP est lancé sur le Mac, saisir
+`http://host.docker.internal:8000/mcp` dans LiteLLM. Le serveur écoute alors
+sur `http://127.0.0.1:8000/mcp` côté Mac. Ne pas saisir `localhost` dans
+LiteLLM, car il désignerait le conteneur LiteLLM.
 
-## Capacités
+Le transport SSE est déprécié par le projet Grist et ne doit pas être choisi
+pour une nouvelle installation. Pour le mode STDIO, consulter la
+[documentation du connecteur](../../README.md#grist--la-suite-numérique).
 
-Les outils sont organisés autour de la navigation, des requêtes, des enregistrements, de l'administration, des accès, de l'export, des pièces jointes et des webhooks. Le parcours de découverte recommandé est :
+## Tests
 
-1. organisations ;
-2. espaces de travail ;
-3. documents ;
-4. tables ;
-5. colonnes et enregistrements.
+1. Dans LiteLLM, vérifier que le serveur est joignable et que les outils sont
+   découverts.
+2. Dans OpenWebUI, envoyer les demandes de lecture ci-dessus avec un espace et
+   un document de test.
+3. Vérifier successivement les organisations, espaces, documents, tables et
+   enregistrements.
+4. Vérifier une lecture sans données sensibles.
+5. Demander une modification, par exemple :
 
-## Permissions et confirmations
+   > Ajoute une ligne de test dans cette table Grist.
 
-Activer d'abord les outils de lecture. Toute création, modification, suppression, import, modification de droits, téléversement ou gestion de webhook doit :
+   L'action doit être refusée ou soumise à une confirmation explicite selon la
+   politique configurée. Ne tester une écriture que dans un document dédié.
 
-- utiliser un compte ou une clé dédiés ;
-- être autorisée par le bridge ;
-- demander une confirmation explicite à l'utilisateur ;
-- être journalisée sans enregistrer la clé ni le contenu sensible.
+Les créations, modifications, suppressions, imports, changements de droits,
+téléversements et webhooks doivent être autorisés par le bridge, confirmés par
+l'utilisateur et journalisés sans clé ni contenu sensible.
 
-Les requêtes SQL doivent être traitées comme des opérations potentiellement sensibles, même lorsqu'elles sont présentées comme une simple consultation.
+## Limites et dépannage
 
-## Test initial
-
-1. Configurer `GRIST_API_KEY` hors du dépôt.
-2. Démarrer le serveur en STDIO.
-3. Vérifier `list_organizations`, puis parcourir un espace et un document de test.
-4. Vérifier la lecture de tables sans données sensibles.
-5. Tester une opération d'écriture uniquement avec confirmation et dans un document de test.
-
-## Dépannage
-
-- Clé absente : vérifier `GRIST_API_KEY` dans l'environnement du processus.
-- Instance incorrecte : vérifier `GRIST_API_URL`.
-- Outils absents : vérifier le lancement `uvx mcp-server-grist` et le transport choisi.
-- HTTP inaccessible : vérifier l'écoute sur `127.0.0.1`, le port `8000` et le chemin `/mcp`.
-- Action refusée : vérifier les droits de la clé et la règle de confirmation du bridge.
+- Sans `GRIST_API_KEY`, le serveur ne peut pas accéder à Grist.
+- Si l'instance est incorrecte, vérifier `GRIST_API_URL` et utiliser l'URL API,
+  pas une URL de navigation Grist.
+- Si aucun outil n'est découvert, vérifier le lancement du serveur, le chemin
+  `/mcp` et le transport Streamable HTTP.
+- Si LiteLLM ne joint pas le serveur sous Docker Desktop, remplacer
+  `127.0.0.1` par `host.docker.internal` dans l'URL saisie dans LiteLLM.
+- Si une action est refusée, vérifier les droits de la clé et la règle de
+  confirmation du bridge.
