@@ -33,15 +33,21 @@ Préparer une clé API Grist dédiée au connecteur. La conserver dans
 l'environnement ou un gestionnaire de secrets, jamais dans le dépôt.
 
 - Clé obligatoire : `GRIST_API_KEY`
-- URL API facultative : `GRIST_API_URL`
-- URL par défaut : `https://docs.getgrist.com/api`
-- URL La Suite numérique : `https://grist.numerique.gouv.fr/api`
+- URL API : `https://grist.numerique.gouv.fr/api`
+- URL de remplacement pour une autre instance : `GRIST_API_URL`
 
-Ne pas utiliser l'URL d'une page Grist contenant `/o/.../ws/...` comme URL API.
+L'instance Grist utilisée par défaut est celle de La Suite numérique. Pour une
+instance Grist locale ou une autre instance, remplacer la valeur de
+`GRIST_API_URL`. Ne pas utiliser l'URL d'une page Grist contenant
+`/o/.../ws/...` comme URL API.
 
-Le serveur Grist peut fonctionner en STDIO ou en Streamable HTTP. Pour une
-déclaration dans LiteLLM, utiliser le mode Streamable HTTP et exposer le
-serveur local sur :
+Le serveur MCP Grist peut fonctionner en STDIO ou en Streamable HTTP. La
+configuration de l'instance Grist reste la même dans les deux cas. Pour la
+configuration par défaut avec LiteLLM, utiliser l'URL Streamable HTTP du
+serveur MCP fourni par l'établissement.
+
+Si l'établissement lance lui-même ce processus MCP sur le poste local, il peut
+exposer :
 
 ```text
 http://127.0.0.1:8000/mcp
@@ -58,14 +64,20 @@ Dans LiteLLM, ouvrir **MCP Servers > Add New MCP Server** et renseigner :
 | Valeur d'authentification | la clé API Grist, dans le champ secret |
 | GitHub / Source URL | `https://github.com/nic01asFr/mcp-server-grist` |
 
-Avec Docker Desktop, si Grist MCP est lancé sur le Mac, saisir
+Avec Docker Desktop, si le processus MCP Grist est lancé sur le Mac, saisir
 `http://host.docker.internal:8000/mcp` dans LiteLLM. Le serveur écoute alors
 sur `http://127.0.0.1:8000/mcp` côté Mac. Ne pas saisir `localhost` dans
 LiteLLM, car il désignerait le conteneur LiteLLM.
 
 Le transport SSE est déprécié par le projet Grist et ne doit pas être choisi
 pour une nouvelle installation. Pour le mode STDIO, consulter la
-[documentation du connecteur](../../README.md#grist--la-suite-numérique).
+[documentation du projet Grist](https://github.com/nic01asFr/mcp-server-grist#readme).
+
+La déclaration dans LiteLLM ne suffit pas à rendre automatiquement les outils
+visibles dans OpenWebUI. OpenWebUI doit aussi être configuré comme client MCP,
+ou une intégration doit transmettre la définition du serveur dans le champ
+`tools` de la requête au modèle. Voir le [guide d'installation](../installation.md)
+pour distinguer ces deux étapes.
 
 ## Tests
 
@@ -90,8 +102,9 @@ l'utilisateur et journalisés sans clé ni contenu sensible.
 ## Limites et dépannage
 
 - Sans `GRIST_API_KEY`, le serveur ne peut pas accéder à Grist.
-- Si l'instance est incorrecte, vérifier `GRIST_API_URL` et utiliser l'URL API,
-  pas une URL de navigation Grist.
+- Si l'instance est incorrecte, vérifier que l'URL par défaut est
+   `https://grist.numerique.gouv.fr/api`, ou que `GRIST_API_URL` pointe vers
+   l'URL API de l'instance choisie, pas vers une URL de navigation Grist.
 - Si aucun outil n'est découvert, vérifier le lancement du serveur, le chemin
   `/mcp` et le transport Streamable HTTP.
 - Si LiteLLM ne joint pas le serveur sous Docker Desktop, remplacer

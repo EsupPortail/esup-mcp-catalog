@@ -14,7 +14,7 @@ configuration:
   required:
     - GRIST_API_KEY
   optional:
-    GRIST_API_URL: https://docs.getgrist.com/api
+    GRIST_API_URL: https://grist.numerique.gouv.fr/api
 capabilities:
   domains: [navigation, queries, records, administration, access, export, attachments, webhooks]
 security:

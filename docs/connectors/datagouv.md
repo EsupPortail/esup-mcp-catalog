@@ -43,6 +43,12 @@ Enregistrer, puis vérifier que les outils sont découverts. Le transport utilis
 est Streamable HTTP ; une installation locale relève de la documentation du
 [projet upstream](https://github.com/datagouv/datagouv-mcp).
 
+La déclaration dans LiteLLM ne suffit pas à rendre automatiquement les outils
+visibles dans OpenWebUI. OpenWebUI doit aussi être configuré comme client MCP,
+ou une intégration doit transmettre la définition du serveur dans le champ
+`tools` de la requête au modèle. Voir le [guide d'installation](../installation.md)
+pour distinguer ces deux étapes.
+
 ## Tests
 
 1. Dans LiteLLM, vérifier que le serveur est joignable et que ses outils sont

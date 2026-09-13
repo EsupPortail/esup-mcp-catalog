@@ -41,7 +41,7 @@ Le POC propose deux connecteurs :
 | Connecteur | Usage principal | Accès |
 |---|---|---|
 | data.gouv.fr | Rechercher et consulter des données publiques | Serveur public, lecture seule |
-| Grist / La Suite numérique | Consulter des données structurées et, si autorisé, les modifier | Instance Grist de l'établissement, clé dédiée |
+| Grist / La Suite numérique | Consulter des données structurées et, si autorisé, les modifier | Instance La Suite numérique par défaut, clé dédiée |
 
 Les procédures, exemples de demandes, paramètres LiteLLM, tests et limites sont
 regroupés dans les fiches dédiées :

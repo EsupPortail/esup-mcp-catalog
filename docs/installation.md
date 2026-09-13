@@ -35,6 +35,11 @@ depuis un conteneur avec `host.docker.internal`, et non avec `localhost` ou
 La configuration MCP se fait dans LiteLLM. OpenWebUI sert d'interface de
 conversation et ne doit pas recevoir les clés des services raccordés.
 
+La déclaration dans LiteLLM est enregistrée dans sa base de données. OpenWebUI
+reste connecté à LiteLLM comme fournisseur de modèle, mais la stack actuelle
+ne transmet pas automatiquement les outils MCP aux conversations. LiteLLM peut
+donc découvrir les outils sans qu'OpenWebUI puisse encore les appeler.
+
 ## Vérifier OpenWebUI
 
 La stack configure normalement OpenWebUI avec LiteLLM :
@@ -54,15 +59,26 @@ Après le démarrage :
    accessible et que le modèle configuré est disponible.
 4. Ouvrir une nouvelle conversation et sélectionner ce modèle.
 
+## Vérifier le chemin MCP
+
+Après l'enregistrement dans LiteLLM :
+
+1. vérifier dans LiteLLM que le serveur est joignable et que ses outils sont
+   découverts ;
+2. vérifier dans OpenWebUI que le modèle configuré répond correctement.
+
+Avec la configuration actuelle, ce contrôle confirme la connexion au modèle et
+la découverte des outils dans LiteLLM, mais pas encore l'appel d'un outil MCP
+depuis une conversation OpenWebUI.
+
 ## Tester et sécuriser
 
-Suivre le test initial décrit dans la fiche du connecteur :
+Pour le moment, effectuer le test initial du connecteur dans LiteLLM :
 
 1. vérifier que le serveur est joignable et que ses outils sont découverts ;
-2. effectuer d'abord une lecture avec un compte ou une ressource de test ;
-3. vérifier qu'aucune donnée sensible ni aucun secret n'apparaît dans les
+2. vérifier qu'aucune donnée sensible ni aucun secret n'apparaît dans les
    réponses ou les journaux ;
-4. tester une écriture uniquement si elle est prévue, avec confirmation
+3. tester une écriture uniquement si elle est prévue, avec confirmation
    explicite et audit.
 
 Les outils et permissions doivent rester limités à l'usage prévu. Toute
