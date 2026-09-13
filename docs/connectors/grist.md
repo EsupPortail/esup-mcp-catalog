@@ -33,13 +33,14 @@ Préparer une clé API Grist dédiée au connecteur. La conserver dans
 l'environnement ou un gestionnaire de secrets, jamais dans le dépôt.
 
 - Clé obligatoire : `GRIST_API_KEY`
-- URL API : `https://grist.numerique.gouv.fr/api`
-- URL de remplacement pour une autre instance : `GRIST_API_URL`
+- URL obligatoire : `GRIST_API_URL=https://grist.numerique.gouv.fr/api`
 
-L'instance Grist utilisée par défaut est celle de La Suite numérique. Pour une
-instance Grist locale ou une autre instance, remplacer la valeur de
-`GRIST_API_URL`. Ne pas utiliser l'URL d'une page Grist contenant
-`/o/.../ws/...` comme URL API.
+`GRIST_API_URL` n'est pas optionnelle : le serveur `mcp-server-grist` pointe
+par défaut vers `https://docs.getgrist.com/api` (le SaaS public GetGrist), pas
+vers La Suite numérique. Sans cette valeur, une clé pourtant valide pour
+`grist.numerique.gouv.fr` est rejetée comme invalide. Pour une instance Grist
+locale ou une autre instance, adapter cette URL en conséquence. Ne pas
+utiliser l'URL d'une page Grist contenant `/o/.../ws/...` comme URL API.
 
 Le serveur MCP Grist peut fonctionner en STDIO ou en Streamable HTTP. La
 configuration de l'instance Grist reste la même dans les deux cas. Pour la

@@ -47,7 +47,7 @@ class MCPBridge:
         self.server_config = server_config
         self.sessions: dict[str, ClientSession] = {}
         self.tools: dict[tuple[str, str], dict[str, Any]] = {}
-        self.exit_stack = AsyncExitStack()
+        self.server_stacks: dict[str, AsyncExitStack] = {}
 
     async def start(self) -> None:
         for server_name, config in self.server_config.items():
@@ -70,18 +70,29 @@ class MCPBridge:
         if not url:
             raise ValueError(f"Server {server_name!r} has no URL")
         headers = config.get("headers", {})
-        http_client = await self.exit_stack.enter_async_context(
-            httpx.AsyncClient(headers=headers)
-        )
-        transport = await self.exit_stack.enter_async_context(
-            streamable_http_client(url, http_client=http_client)
-        )
-        read_stream, write_stream, _ = transport
-        session = await self.exit_stack.enter_async_context(
-            ClientSession(read_stream, write_stream)
-        )
-        await session.initialize()
-        tool_result = await session.list_tools()
+
+        stack = AsyncExitStack()
+        try:
+            http_client = await stack.enter_async_context(
+                httpx.AsyncClient(headers=headers)
+            )
+            transport = await stack.enter_async_context(
+                streamable_http_client(url, http_client=http_client)
+            )
+            read_stream, write_stream, _ = transport
+            session = await stack.enter_async_context(
+                ClientSession(read_stream, write_stream)
+            )
+            await session.initialize()
+            tool_result = await session.list_tools()
+        except BaseException:
+            await stack.aclose()
+            raise
+
+        old_stack = self.server_stacks.pop(server_name, None)
+        if old_stack is not None:
+            await old_stack.aclose()
+        self.server_stacks[server_name] = stack
         self.sessions[server_name] = session
         for tool in tool_result.tools:
             self.tools[(server_name, tool.name)] = {
@@ -91,7 +102,8 @@ class MCPBridge:
             }
 
     async def stop(self) -> None:
-        await self.exit_stack.aclose()
+        for stack in self.server_stacks.values():
+            await stack.aclose()
 
     async def call(
         self, server_name: str, tool_name: str, arguments: dict[str, Any]
@@ -99,7 +111,25 @@ class MCPBridge:
         session = self.sessions.get(server_name)
         if session is None or (server_name, tool_name) not in self.tools:
             raise HTTPException(status_code=404, detail="MCP tool not found")
-        result = await session.call_tool(tool_name, arguments=arguments)
+        try:
+            result = await session.call_tool(tool_name, arguments=arguments)
+        except Exception:
+            # The underlying MCP session can go stale (e.g. the target server
+            # restarted and no longer recognizes it) well after startup.
+            # Reconnect once before giving up on this call.
+            logger.warning(
+                "Tool call failed on %r, reconnecting and retrying once",
+                server_name,
+            )
+            try:
+                await self._start_server(server_name, self.server_config[server_name])
+            except BaseException:
+                logger.exception("Reconnect failed for %r", server_name)
+                raise HTTPException(
+                    status_code=502, detail="MCP server unavailable"
+                ) from None
+            session = self.sessions[server_name]
+            result = await session.call_tool(tool_name, arguments=arguments)
         return result.model_dump(mode="json")
 
 

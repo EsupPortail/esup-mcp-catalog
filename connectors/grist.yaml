@@ -13,7 +13,11 @@ connection:
 configuration:
   required:
     - GRIST_API_KEY
-  optional:
+    # Le serveur pointe par défaut vers https://docs.getgrist.com/api
+    # (SaaS public GetGrist) : GRIST_API_URL doit être fixée explicitement
+    # pour une instance La Suite numérique ou toute autre instance.
+    - GRIST_API_URL
+  defaults:
     GRIST_API_URL: https://grist.numerique.gouv.fr/api
 capabilities:
   domains: [navigation, queries, records, administration, access, export, attachments, webhooks]
