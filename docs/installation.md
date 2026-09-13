@@ -33,7 +33,26 @@ Le serveur data.gouv.fr est déjà hébergé. Il n'y a donc pas de programme à 
 
 ### Déclaration
 
-Ajouter le serveur dans la configuration MCP de MyIA ou de LiteLLM avec :
+Dans cette installation, le serveur est ajouté depuis l'interface d'administration LiteLLM :
+
+1. Ouvrir `http://localhost:4000/ui/`.
+2. Se connecter avec la clé maître `LITELLM_MASTER_KEY` définie dans le fichier `.env` de MyIA.
+3. Ouvrir **MCP Servers** puis **Add New MCP Server**.
+4. Renseigner les champs suivants :
+
+| Champ | Valeur |
+|---|---|
+| Nom | `datagouv` |
+| MCP Server URL / Server URL | `https://mcp.data.gouv.fr/mcp` |
+| Transport | Streamable HTTP |
+| Authentification | Aucune |
+| GitHub / Source URL | `https://github.com/datagouv/datagouv-mcp` |
+
+Le champ **MCP Server URL** est l'adresse utilisée pour appeler le serveur. Le champ **GitHub / Source URL** est seulement la référence du projet source et ne remplace pas l'endpoint MCP.
+
+Enregistrer le serveur, puis vérifier que LiteLLM découvre ses outils.
+
+Pour un client MCP qui accepte une configuration JSON, l'équivalent est :
 
 ```json
 {
@@ -44,17 +63,36 @@ Ajouter le serveur dans la configuration MCP de MyIA ou de LiteLLM avec :
 
 ### Vérification
 
-1. Enregistrer la configuration.
-2. Vérifier que le serveur est joignable.
-3. Vérifier que les outils sont découverts.
-4. Lancer une recherche simple de jeu de données.
-5. Vérifier que seuls des outils de lecture sont proposés.
+1. Vérifier que le serveur est joignable depuis LiteLLM.
+2. Vérifier que les outils sont découverts.
+3. Ouvrir `http://localhost:3000`, créer une nouvelle conversation et sélectionner le modèle configuré dans MyIA.
+4. Envoyer une demande explicite, par exemple :
+
+  > Recherche sur data.gouv.fr des jeux de données publics concernant les effectifs étudiants en France. Donne-moi les titres et les liens des trois résultats les plus pertinents.
+
+  MyIA doit alors utiliser un outil de recherche data.gouv.fr et afficher les résultats dans la conversation.
+5. Dans LiteLLM, ouvrir la fiche du serveur et consulter la liste des outils découverts. Les outils attendus sont des outils de recherche ou de consultation, par exemple `search_datasets`, `search_organizations`, `get_dataset_info`, `list_dataset_resources` et `get_resource_info`.
+6. Vérifier qu'aucun outil de création, modification, suppression, import ou envoi n'est présent. Pour data.gouv.fr, la liste doit être en lecture seule.
+7. Depuis MyIA, demander par exemple :
+
+  > Modifie ce jeu de données sur data.gouv.fr.
+
+  MyIA doit indiquer qu'il peut seulement consulter les données et ne doit appeler aucun outil d'écriture.
+8. Vérifier dans les logs qu'aucune clé n'est envoyée au serveur data.gouv.fr.
 
 Aucune clé n'est requise pour l'instance publique documentée. Une installation locale relève de la documentation du projet [datagouv/datagouv-mcp](https://github.com/datagouv/datagouv-mcp).
 
 ## Installer Grist
 
 Grist nécessite une instance Grist accessible et une clé API dédiée. L'URL par défaut documentée par le serveur est `https://docs.getgrist.com/api` ; une autre instance peut être indiquée avec `GRIST_API_URL`.
+
+Pour une instance La Suite numérique, utiliser l'URL de base de l'API, généralement :
+
+```text
+https://grist.numerique.gouv.fr/api
+```
+
+Ne pas utiliser directement l'URL d'une page d'espace ou de document telle que `/o/.../ws/...`. Le serveur MCP ajoute lui-même les chemins d'API (`/orgs`, `/workspaces`, `/docs`) à l'URL configurée.
 
 ### Préparer la clé
 
@@ -73,7 +111,7 @@ Le mode STDIO lance le serveur localement avec `uvx` :
   "args": ["mcp-server-grist"],
   "env": {
     "GRIST_API_KEY": "${GRIST_API_KEY}",
-    "GRIST_API_URL": "https://docs.getgrist.com/api"
+    "GRIST_API_URL": "https://grist.numerique.gouv.fr/api"
   }
 }
 ```
@@ -89,6 +127,21 @@ http://127.0.0.1:8000/mcp
 ```
 
 Ce mode doit rester local pendant le POC. Pour une exposition distante, ajouter HTTPS, contrôle d'accès et validation de l'origine. Le transport SSE est déprécié par le projet upstream et ne doit pas être choisi pour une nouvelle installation.
+
+### Déclaration dans LiteLLM
+
+Pour la recette avec LiteLLM :
+
+1. Ouvrir **MCP Servers** puis **Add New MCP Server**.
+2. Donner un nom au serveur, par exemple `grist`.
+3. Coller l'URL MCP dans le champ **MCP Server URL / Server URL**.
+4. Sélectionner le transport **Streamable HTTP**.
+5. Choisir le mode d'authentification **API Key**.
+6. Coller la clé Grist dans le champ secret prévu pour la valeur d'authentification.
+7. Renseigner l'URL du dépôt dans **GitHub / Source URL** : `https://github.com/nic01asFr/mcp-server-grist`.
+8. Enregistrer, puis vérifier que LiteLLM découvre les outils.
+
+La clé saisie dans LiteLLM remplace alors la configuration `GRIST_API_KEY` du processus local. Ne renseignez pas la clé dans `catalog.yaml`, dans un manifeste YAML, dans le README ou dans une conversation.
 
 ### Vérification
 

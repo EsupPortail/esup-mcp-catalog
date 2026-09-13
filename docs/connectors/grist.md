@@ -12,6 +12,8 @@ Ce connecteur permet à MyIA de consulter et, si l'établissement l'autorise, de
 - URL optionnelle : `GRIST_API_URL`
 - URL par défaut documentée : `https://docs.getgrist.com/api`
 
+Pour l'instance Grist de La Suite numérique, utiliser l'URL de base API `https://grist.numerique.gouv.fr/api`. Une URL d'interface contenant `/o/.../ws/...` identifie un espace dans le navigateur ; elle ne doit pas être utilisée comme base des appels API de ce serveur MCP.
+
 La clé doit être créée et conservée dans la configuration locale ou un gestionnaire de secrets. Elle ne doit jamais être écrite dans ce dépôt.
 
 ## Choisir le transport
@@ -36,6 +38,21 @@ Le client lance le serveur directement :
 Le projet upstream documente un lancement local sur `127.0.0.1:8000` avec le chemin `/mcp`. Ce mode doit rester limité au réseau local pendant le POC. Toute exposition distante nécessite HTTPS, contrôle d'accès et validation de l'origine.
 
 Le transport SSE est déprécié dans le projet upstream et ne doit pas être choisi pour une nouvelle configuration.
+
+### Configuration via LiteLLM
+
+Dans **MCP Servers > Add New MCP Server**, renseigner :
+
+| Champ | Valeur |
+|---|---|
+| Nom | `grist` |
+| MCP Server URL / Server URL | l'URL MCP du serveur Grist |
+| Transport | Streamable HTTP |
+| Authentification | API Key |
+| Valeur d'authentification | la clé API Grist, saisie dans le champ secret |
+| GitHub / Source URL | `https://github.com/nic01asFr/mcp-server-grist` |
+
+La clé ne doit pas apparaître dans les fichiers du catalogue ni dans les journaux. Pour un lancement local contrôlé par l'environnement du serveur, la variable `GRIST_API_KEY` reste l'alternative documentée.
 
 ## Capacités
 
