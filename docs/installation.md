@@ -97,37 +97,26 @@ docker compose up -d
 
 Dans **Panneau d'administration > Réglages > Intégrations > Gérer les
 serveurs d'outils** (nommé *Tools > Add connection* dans les versions plus
-anciennes d'OpenWebUI), ajouter une connexion et renseigner :
+anciennes d'OpenWebUI), ajouter **une connexion par serveur MCP configuré**
+(pas une seule connexion regroupant tout, qui empêcherait de choisir un
+connecteur à la fois dans le sélecteur d'outils) :
 
 | Champ | Valeur |
 |---|---|
 | Type | OpenAPI |
-| Nom d'utilisateur | `MCP Catalog` |
-| URL | `http://host.docker.internal:8090` |
+| Nom d'utilisateur | nom du connecteur, ex. `data.gouv.fr` |
+| URL | `http://host.docker.internal:8090/servers/{nom}` (`{nom}` = clé du serveur dans `MCP_SERVERS_JSON`, ex. `datagouv`) |
 | Auth | Bearer |
 | Clé API | la valeur de `BRIDGE_API_KEY` dans `.env.bridge` |
 
-Le champ « Nom d'utilisateur » est un intitulé trompeur d'OpenWebUI
-(chaîne générique réutilisée sur ce formulaire) : c'est en réalité le nom
-de la connexion, pas un identifiant de compte. Y mettre n'importe quel nom
-descriptif.
+Voir le [README du bridge](../bridge/README.md#connexion-openwebui) pour le
+détail (champ « Nom d'utilisateur » trompeur, piège `/openapi.json`, et
+pourquoi un rechargement complet du navigateur est nécessaire après avoir
+ajouté une connexion).
 
-Ne pas ajouter `/openapi.json` à la fin de l'URL : OpenWebUI l'ajoute lui-même.
-Le mettre quand même produit une requête vers `.../openapi.json/openapi.json`,
-qui échoue en 404.
-
-Cette URL regroupe tous les connecteurs configurés dans une seule
-connexion : le sélecteur d'outils d'OpenWebUI ne permet alors de
-l'activer ou de la désactiver qu'en bloc, pas outil par outil. Pour
-pouvoir choisir un connecteur à la fois, déclarer une connexion par
-serveur avec `http://host.docker.internal:8090/servers/{nom}` (`{nom}`
-étant la clé du serveur dans `MCP_SERVERS_JSON`, par exemple `datagouv`
-ou `grist`) — voir le [README du
-bridge](../bridge/README.md#connecter-les-serveurs-separement).
-
-Enregistrer, puis vérifier que les outils découverts apparaissent dans la
-liste des outils. Le bridge doit être redémarré après toute modification de
-`.env.bridge`.
+Répéter pour chaque connecteur, enregistrer, puis vérifier que les outils
+découverts apparaissent dans le sélecteur d'outils. Le bridge doit être
+redémarré après toute modification de `.env.bridge`.
 
 En copiant la clé API depuis un fichier ou un terminal, vérifier qu'elle
 n'est pas tronquée (fin de ligne coupée à l'affichage) : une clé

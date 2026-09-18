@@ -35,46 +35,60 @@ aux outils.
 
 ## Connexion OpenWebUI
 
+Le selecteur d'outils d'OpenWebUI (icone dans la fenetre de conversation)
+active ou desactive une connexion entiere, pas un outil individuel. Declarer
+**une connexion par serveur MCP**, plutot qu'une seule connexion regroupant
+tout, pour pouvoir choisir au cas par cas quel connecteur utiliser sans
+noyer le modele sous des outils sans rapport avec la demande.
+
 Dans **Panneau d'administration > Réglages > Intégrations > Gérer les
 serveurs d'outils** (nommé *Tools > Add connection* dans les versions plus
-anciennes d'OpenWebUI), ajouter une connexion :
+anciennes d'OpenWebUI), ajouter une connexion par serveur configure dans
+`MCP_SERVERS_JSON`, par exemple pour `datagouv` :
 
 | Champ | Valeur |
 |---|---|
 | Type | OpenAPI |
-| Nom d'utilisateur | `MCP Catalog` |
-| URL | `http://host.docker.internal:8090` |
+| Nom d'utilisateur | `data.gouv.fr` |
+| URL | `http://host.docker.internal:8090/servers/datagouv` |
 | Auth | Bearer |
 | Cle API | la valeur de `BRIDGE_API_KEY` |
 
+Repeter pour chaque serveur (`grist`, etc.), en changeant le nom et le
+`{nom}` a la fin de l'URL pour qu'il corresponde a la cle utilisee dans
+`MCP_SERVERS_JSON`.
+
 Le champ "Nom d'utilisateur" est un intitule trompeur d'OpenWebUI (chaine
 generique reutilisee sur ce formulaire) : c'est en realite le nom de la
-connexion, pas un identifiant de compte. Y mettre n'importe quel nom
-descriptif.
+connexion, pas un identifiant de compte. Le laisser vide produit une
+connexion sans nom affiche dans le selecteur d'outils (juste une icone) ;
+toujours y mettre un nom descriptif.
 
 Depuis un OpenWebUI lance dans Docker Desktop, `host.docker.internal` designe
 le Mac hote. Si OpenWebUI et le bridge sont places sur le meme reseau Docker,
-utilisez plutot `http://mcp-openapi-bridge:8090`.
+utilisez plutot `http://mcp-openapi-bridge:8090/servers/{nom}`.
 
 Ne pas ajouter `/openapi.json` a la fin de l'URL : OpenWebUI l'ajoute lui-meme.
 Le mettre quand meme produit une requete vers `.../openapi.json/openapi.json`,
 qui echoue en 404.
 
-### Connecter les serveurs separement
+Apres avoir ajoute ou modifie une connexion, faire un **rechargement complet**
+de la page (Cmd/Ctrl+Maj+R, pas juste F5) avant de verifier le selecteur
+d'outils dans une conversation : OpenWebUI garde la liste des connexions en
+cache cote navigateur et peut continuer d'afficher l'ancien etat sinon,
+donnant l'impression qu'une connexion pourtant bien enregistree n'existe
+pas.
 
-Le selecteur d'outils d'OpenWebUI (icone dans la fenetre de conversation)
-active ou desactive une connexion entiere, pas un outil individuel. Avec
-une seule connexion "MCP Catalog", c'est donc tout ou rien pour tous les
-serveurs MCP configures.
+La connexion generale `http://host.docker.internal:8090` (tous les serveurs
+en une seule fois, sans le prefixe `/servers/{nom}`) reste disponible mais
+n'est pas recommandee en complement des connexions par serveur : les memes
+outils apparaitraient alors deux fois dans le selecteur.
 
-Pour choisir au cas par cas quel connecteur utiliser, declarer une
-connexion OpenWebUI par serveur MCP plutot qu'une seule connexion
-generale, en utilisant l'URL `http://host.docker.internal:8090/servers/{nom}`
-(ou `{nom}` est la cle utilisee dans `MCP_SERVERS_JSON`, par exemple
-`datagouv` ou `grist`). OpenWebUI y ajoute lui-meme `/openapi.json` et ne
-decouvre alors que les outils de ce serveur. La connexion generale
-`http://host.docker.internal:8090` (tous les serveurs) reste utilisable en
-parallele si besoin.
+Le bridge n'envoie pas d'en-tetes CORS restrictifs (`Access-Control-Allow-
+Origin: *` sur les routes de decouverte) : l'ecran Integrations d'OpenWebUI
+verifie une connexion depuis le navigateur, pas depuis son propre backend,
+et bloquerait sinon l'enregistrement meme quand le bridge est parfaitement
+joignable.
 
 ## Configuration MCP
 

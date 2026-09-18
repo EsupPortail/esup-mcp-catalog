@@ -119,10 +119,18 @@ sans rapport avec la demande.
 
 Le bridge expose maintenant un point d'entrée OpenAPI par serveur MCP
 (`/servers/{nom}/openapi.json`, voir le [README du
-bridge](../bridge/README.md#connecter-les-serveurs-separement)). Déclarer
-une connexion OpenWebUI par connecteur, plutôt qu'une seule connexion
-générale, permet d'activer ou de désactiver chaque source indépendamment
-depuis le sélecteur d'outils.
+bridge](../bridge/README.md#connexion-openwebui)). Déclarer une connexion
+OpenWebUI par connecteur, plutôt qu'une seule connexion générale, permet
+d'activer ou de désactiver chaque source indépendamment depuis le
+sélecteur d'outils. Supprimer la connexion générale existante après
+être passé aux connexions par connecteur, sinon les mêmes outils
+apparaissent deux fois.
+
+Après l'ajout d'une connexion, un simple retour sur la conversation ne
+suffit pas toujours à voir le sélecteur d'outils se mettre à jour : un
+rechargement complet du navigateur (Cmd/Ctrl+Maj+R) a été nécessaire pour
+que les nouvelles connexions apparaissent, alors qu'elles étaient déjà
+correctement enregistrées.
 
 ## Pour aller plus loin
 
