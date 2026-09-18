@@ -8,6 +8,7 @@ from typing import Any
 
 import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request, Security, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
@@ -151,6 +152,17 @@ app = FastAPI(
     description="Expose configured MCP tools as OpenAPI operations for OpenWebUI.",
     version="0.1.0",
     lifespan=lifespan,
+)
+
+# OpenWebUI's admin UI verifies a tool connection from the browser, so the
+# spec fetch is cross-origin from wherever OpenWebUI is served. The actual
+# tool calls go through OpenWebUI's backend and don't need this, but the
+# discovery step does.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
 )
 
 
