@@ -187,45 +187,64 @@ async def list_tools(_: None = Depends(require_api_key)) -> dict[str, Any]:
     }
 
 
-def custom_openapi() -> dict[str, Any]:
-    schema = app.openapi_schema
-    if schema is None:
-        from fastapi.openapi.utils import get_openapi
+def build_openapi_schema(server_filter: str | None = None) -> dict[str, Any]:
+    from fastapi.openapi.utils import get_openapi
 
-        schema = get_openapi(
-            title=app.title,
-            version=app.version,
-            description=app.description,
-            routes=app.routes,
-        )
-        schema["components"]["securitySchemes"] = {
-            "BearerAuth": {
-                "type": "http",
-                "scheme": "bearer",
-            }
+    schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description=app.description,
+        routes=app.routes,
+    )
+    schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
         }
-        paths = schema["paths"]
-        generic_operation = paths["/tools/{server_name}/{tool_name}"]["post"]
-        for (server_name, tool_name), tool in (bridge.tools.items() if bridge else []):
-            path = f"/tools/{server_name}/{tool_name}"
-            operation = deepcopy(generic_operation)
-            operation.pop("parameters", None)
-            paths[path] = {"post": operation}
-            operation["operationId"] = operation_id(server_name, tool_name)
-            operation["summary"] = tool["name"]
-            operation["description"] = tool["description"]
-            operation["security"] = [{"BearerAuth": []}]
-            operation["requestBody"] = {
-                "required": False,
-                "content": {
-                    "application/json": {
-                        "schema": tool["inputSchema"],
-                    }
-                },
-            }
-        del paths["/tools/{server_name}/{tool_name}"]
-        app.openapi_schema = schema
+    }
+    paths = schema["paths"]
+    generic_operation = paths["/tools/{server_name}/{tool_name}"]["post"]
+    items = bridge.tools.items() if bridge else []
+    if server_filter is not None:
+        items = [
+            ((server_name, tool_name), tool)
+            for (server_name, tool_name), tool in items
+            if server_name == server_filter
+        ]
+    for (server_name, tool_name), tool in items:
+        path = f"/tools/{server_name}/{tool_name}"
+        operation = deepcopy(generic_operation)
+        operation.pop("parameters", None)
+        paths[path] = {"post": operation}
+        operation["operationId"] = operation_id(server_name, tool_name)
+        operation["summary"] = tool["name"]
+        operation["description"] = tool["description"]
+        operation["security"] = [{"BearerAuth": []}]
+        operation["requestBody"] = {
+            "required": False,
+            "content": {
+                "application/json": {
+                    "schema": tool["inputSchema"],
+                }
+            },
+        }
+    del paths["/tools/{server_name}/{tool_name}"]
     return schema
 
 
+def custom_openapi() -> dict[str, Any]:
+    if app.openapi_schema is None:
+        app.openapi_schema = build_openapi_schema()
+    return app.openapi_schema
+
+
 app.openapi = custom_openapi
+
+
+@app.get("/servers/{server_name}/openapi.json", include_in_schema=False)
+async def server_openapi(server_name: str) -> dict[str, Any]:
+    if bridge is None:
+        raise HTTPException(status_code=503, detail="Bridge is not ready")
+    if server_name not in bridge.server_config:
+        raise HTTPException(status_code=404, detail="Unknown MCP server")
+    return build_openapi_schema(server_filter=server_name)

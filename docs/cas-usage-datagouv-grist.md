@@ -108,16 +108,21 @@ ou retirée avant l'insertion. C'est désormais couvert par le system
 prompt ci-dessus, et noté dans les [limites du connecteur
 Grist](connectors/grist.md#limites-et-dépannage).
 
-## Limite connue de l'interface : pas de sélection fine des outils
+## Limite d'interface rencontrée, puis corrigée : sélection par connecteur
 
 Le sélecteur d'outils d'OpenWebUI, dans la fenêtre de conversation, active
-ou désactive une connexion entière (ex. "MCP Catalog", 74 outils sur ce
-POC), pas un outil individuel. Impossible donc de ne présenter au modèle
-que les 2-3 outils utiles à une tâche donnée depuis cette interface. Pour
-réduire le nombre d'outils exposés en permanence, il faut soit retirer un
-serveur de `MCP_SERVERS_JSON` dans `bridge/.env.bridge` (et redémarrer le
-bridge), soit filtrer les outils exposés côté bridge — non implémenté à ce
-stade.
+ou désactive une connexion entière, pas un outil individuel. Avec une
+seule connexion "MCP Catalog" regroupant tous les serveurs MCP (74 outils
+sur ce POC), c'était tout ou rien : impossible de ne présenter au modèle
+que les outils d'un seul connecteur, ce qui le noie face à trop de sources
+sans rapport avec la demande.
+
+Le bridge expose maintenant un point d'entrée OpenAPI par serveur MCP
+(`/servers/{nom}/openapi.json`, voir le [README du
+bridge](../bridge/README.md#connecter-les-serveurs-separement)). Déclarer
+une connexion OpenWebUI par connecteur, plutôt qu'une seule connexion
+générale, permet d'activer ou de désactiver chaque source indépendamment
+depuis le sélecteur d'outils.
 
 ## Pour aller plus loin
 

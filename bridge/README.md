@@ -60,6 +60,22 @@ Ne pas ajouter `/openapi.json` a la fin de l'URL : OpenWebUI l'ajoute lui-meme.
 Le mettre quand meme produit une requete vers `.../openapi.json/openapi.json`,
 qui echoue en 404.
 
+### Connecter les serveurs separement
+
+Le selecteur d'outils d'OpenWebUI (icone dans la fenetre de conversation)
+active ou desactive une connexion entiere, pas un outil individuel. Avec
+une seule connexion "MCP Catalog", c'est donc tout ou rien pour tous les
+serveurs MCP configures.
+
+Pour choisir au cas par cas quel connecteur utiliser, declarer une
+connexion OpenWebUI par serveur MCP plutot qu'une seule connexion
+generale, en utilisant l'URL `http://host.docker.internal:8090/servers/{nom}`
+(ou `{nom}` est la cle utilisee dans `MCP_SERVERS_JSON`, par exemple
+`datagouv` ou `grist`). OpenWebUI y ajoute lui-meme `/openapi.json` et ne
+decouvre alors que les outils de ce serveur. La connexion generale
+`http://host.docker.internal:8090` (tous les serveurs) reste utilisable en
+parallele si besoin.
+
 ## Configuration MCP
 
 Le bridge accepte les serveurs Streamable HTTP. Exemple :

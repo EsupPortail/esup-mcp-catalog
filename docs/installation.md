@@ -116,6 +116,15 @@ Ne pas ajouter `/openapi.json` à la fin de l'URL : OpenWebUI l'ajoute lui-même
 Le mettre quand même produit une requête vers `.../openapi.json/openapi.json`,
 qui échoue en 404.
 
+Cette URL regroupe tous les connecteurs configurés dans une seule
+connexion : le sélecteur d'outils d'OpenWebUI ne permet alors de
+l'activer ou de la désactiver qu'en bloc, pas outil par outil. Pour
+pouvoir choisir un connecteur à la fois, déclarer une connexion par
+serveur avec `http://host.docker.internal:8090/servers/{nom}` (`{nom}`
+étant la clé du serveur dans `MCP_SERVERS_JSON`, par exemple `datagouv`
+ou `grist`) — voir le [README du
+bridge](../bridge/README.md#connecter-les-serveurs-separement).
+
 Enregistrer, puis vérifier que les outils découverts apparaissent dans la
 liste des outils. Le bridge doit être redémarré après toute modification de
 `.env.bridge`.
