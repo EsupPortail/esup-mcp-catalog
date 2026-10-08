@@ -60,6 +60,20 @@ d'outils externes** d'OpenWebUI, ajouter une connexion :
 
 Enregistrer, puis vérifier que les outils sont découverts.
 
+Le même jeton donne accès à d'autres services MCP exposés depuis le même
+tableau de bord OpenLegi, selon le même modèle d'URL
+(`https://mcp.openlegi.fr/{service}/mcp?token=VOTRE_TOKEN`) — non
+catalogués dans ce dépôt pour l'instant, mais déclarables de la même façon
+si besoin :
+
+| Service | Couverture | Chemin |
+|---|---|---|
+| RNE (INPI) | Annuaire des entreprises (identité, immatriculation, dirigeants) — pas les documents (statuts, bilans, actes) | `/rne/mcp` |
+| BOFiP | Doctrine fiscale (Bulletin officiel des finances publiques) | `/bofip/mcp` |
+| BODACC | Annonces légales et commerciales | `/bodacc/mcp` |
+| EUR-Lex | Législation européenne — activation à demander auprès d'OpenLegi | `/eur-lex/mcp` (à confirmer) |
+| Judilibre | Décisions de justice (Cour de cassation) — pas encore disponible | — |
+
 Déclarer aussi ce serveur dans LiteLLM reste possible mais facultatif — voir
 le [guide d'installation](../installation.md) pour la distinction entre les
 deux étapes.

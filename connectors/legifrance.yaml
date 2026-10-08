@@ -16,7 +16,10 @@ configuration:
     - OPENLEGI_TOKEN
   notes: >-
     Créer un compte gratuit sur openlegi.fr, puis récupérer le jeton MCP
-    depuis le tableau de bord.
+    depuis le tableau de bord. Ce même jeton donne accès à d'autres
+    services MCP du même tableau de bord (RNE, BOFiP, BODACC, et bientôt
+    EUR-Lex et Judilibre), non catalogués ici — voir
+    docs/connectors/legifrance.md.
 capabilities:
   access: read-only
   domains: [codes, lois, decrets, jurisprudence, jorf]
