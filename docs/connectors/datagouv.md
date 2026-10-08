@@ -49,8 +49,8 @@ deux étapes.
 
 ## Tests
 
-1. Dans LiteLLM, vérifier que le serveur est joignable et que ses outils sont
-   découverts.
+1. Dans OpenWebUI, vérifier sur l'écran de la connexion que le serveur est
+   joignable et que ses outils sont découverts.
 2. Dans OpenWebUI, envoyer l'un des exemples de recherche ci-dessus.
 3. Vérifier que la réponse contient des titres, des liens et des informations
    issues de data.gouv.fr.

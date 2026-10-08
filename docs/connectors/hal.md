@@ -50,7 +50,8 @@ d'outils externes** d'OpenWebUI, ajouter une connexion :
 Enregistrer, puis vérifier que les outils sont découverts.
 
 Déclarer aussi ce serveur dans LiteLLM reste possible mais facultatif — voir
-le [guide d'installation](../installation.md).
+le [guide d'installation](../installation.md) pour la distinction entre les
+deux étapes.
 
 ## Tests
 

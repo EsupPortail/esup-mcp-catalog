@@ -56,7 +56,8 @@ Enregistrer, puis vérifier que les outils sont découverts. Mettre à jour
 mode d'authentification confirmé.
 
 Déclarer aussi ce serveur dans LiteLLM reste possible mais facultatif — voir
-le [guide d'installation](../installation.md).
+le [guide d'installation](../installation.md) pour la distinction entre les
+deux étapes.
 
 ## Tests
 

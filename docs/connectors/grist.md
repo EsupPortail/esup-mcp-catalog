@@ -44,8 +44,8 @@ utiliser l'URL d'une page Grist contenant `/o/.../ws/...` comme URL API.
 
 Le serveur MCP Grist peut fonctionner en STDIO ou en Streamable HTTP. La
 configuration de l'instance Grist reste la même dans les deux cas. OpenWebUI
-ne sait se connecter qu'en Streamable HTTP : utiliser cette URL, celle du
-serveur MCP fourni par l'établissement.
+ne sait se connecter qu'en Streamable HTTP : utiliser l'URL Streamable HTTP
+du serveur MCP fourni par l'établissement.
 
 Pour un déploiement local, [`grist-mcp/`](../../grist-mcp/README.md) lance
 ce serveur automatiquement, joignable sous `http://127.0.0.1:8000/mcp`
