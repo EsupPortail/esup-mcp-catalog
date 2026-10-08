@@ -10,15 +10,14 @@ personne qui tente un scénario du même genre gagne du temps.
 ## Objectif du test
 
 Vérifier que MyIA peut combiner deux connecteurs dans une seule demande
-utilisateur, sans que la personne ait à connaître les noms des outils MCP,
-les identifiants techniques (dataset, document Grist) ou la mécanique
-interne du bridge.
+utilisateur, sans que la personne ait à connaître les noms des outils MCP
+ni les identifiants techniques (dataset, document Grist).
 
 ## Pré-requis
 
 - Les connecteurs [data.gouv.fr](connectors/datagouv.md) et
-  [Grist](connectors/grist.md) déclarés dans LiteLLM et actifs dans le
-  [bridge](../bridge/README.md).
+  [Grist](connectors/grist.md) déclarés comme connexions MCP dans
+  OpenWebUI.
 - Un document Grist de test existant (créé au préalable, avec un nom
   connu de l'utilisateur).
 
@@ -112,32 +111,33 @@ Grist](connectors/grist.md#limites-et-dépannage).
 
 Le sélecteur d'outils d'OpenWebUI, dans la fenêtre de conversation, active
 ou désactive une connexion entière, pas un outil individuel. Avec une
-seule connexion "MCP Catalog" regroupant tous les serveurs MCP (74 outils
-sur ce POC), c'était tout ou rien : impossible de ne présenter au modèle
-que les outils d'un seul connecteur, ce qui le noie face à trop de sources
-sans rapport avec la demande.
+seule connexion regroupant tous les serveurs MCP, c'est tout ou rien :
+impossible de ne présenter au modèle que les outils d'un seul connecteur,
+ce qui le noie face à trop de sources sans rapport avec la demande.
 
-Le bridge expose maintenant un point d'entrée OpenAPI par serveur MCP
-(`/servers/{nom}/openapi.json`, voir le [README du
-bridge](../bridge/README.md#connexion-openwebui)). Déclarer une connexion
-OpenWebUI par connecteur, plutôt qu'une seule connexion générale, permet
-d'activer ou de désactiver chaque source indépendamment depuis le
-sélecteur d'outils. Supprimer la connexion générale existante après
-être passé aux connexions par connecteur, sinon les mêmes outils
-apparaissent deux fois.
+OpenWebUI, nativement, considère une connexion MCP = un serveur : déclarer
+une connexion par connecteur (voir le [guide
+d'installation](installation.md)) suffit à obtenir cette granularité, sans
+contournement nécessaire.
 
-Après l'ajout d'une connexion, un simple retour sur la conversation ne
-suffit pas toujours à voir le sélecteur d'outils se mettre à jour : un
-rechargement complet du navigateur (Cmd/Ctrl+Maj+R) a été nécessaire pour
-que les nouvelles connexions apparaissent, alors qu'elles étaient déjà
-correctement enregistrées.
+Après l'ajout d'une connexion, un simple retour sur la conversation n'a pas
+toujours suffi à voir le sélecteur d'outils se mettre à jour lors de nos
+tests : un rechargement complet du navigateur (Cmd/Ctrl+Maj+R) a été
+nécessaire pour que les nouvelles connexions apparaissent, alors qu'elles
+étaient déjà correctement enregistrées. Ce comportement a été observé avec
+les connexions OpenAPI de l'ancienne architecture bridge ; il s'agit
+probablement d'un comportement général du frontend OpenWebUI plutôt que
+d'une particularité de ce qui l'a produit, mais reste à revalider avec les
+connexions MCP natives — voir la [feuille de
+route](../README.md#feuille-de-route).
 
 ## Pour aller plus loin
 
 Le system prompt améliore nettement la fiabilité mais reste dépendant du
 modèle : rien ne garantit qu'il tienne sur une variante de la demande non
 anticipée dans le prompt, ou avec un modèle moins capable. Une piste plus
-robuste, non développée à ce stade, consisterait à exposer côté bridge un
-outil composite unique (par exemple `import_opendata_vers_grist`) qui
-exécuterait tout le pipeline serveur, ne laissant au modèle qu'un seul
-appel à réussir plutôt que quatre. Voir la [feuille de route](../README.md#feuille-de-route).
+robuste, non développée à ce stade, consisterait à exposer un outil
+composite unique (par exemple `import_opendata_vers_grist`) via un serveur
+MCP dédié, qui exécuterait tout le pipeline côté serveur, ne laissant au
+modèle qu'un seul appel à réussir plutôt que quatre. Voir la [feuille de
+route](../README.md#feuille-de-route).
