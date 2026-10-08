@@ -29,30 +29,23 @@ aucune donnée sur data.gouv.fr.
 
 Le serveur public est déjà hébergé. Il ne nécessite pas de clé.
 
-Dans LiteLLM, ouvrir **MCP Servers > Add New MCP Server** et renseigner :
+Dans **Panneau d'administration > Réglages > Intégrations > Serveurs
+d'outils externes** d'OpenWebUI, ajouter une connexion :
 
 | Champ | Valeur |
 |---|---|
-| Nom | `datagouv` |
-| MCP Server URL / Server URL | `https://mcp.data.gouv.fr/mcp` |
-| Transport | **Streamable HTTP** |
-| Authentification | aucune |
+| Type | **MCP (Streamable HTTP)** |
+| Nom | `data.gouv.fr` |
+| URL | `https://mcp.data.gouv.fr/mcp` |
+| Authentification | Aucune |
 
-Ne pas renseigner le champ **GitHub / Source URL** : sur certaines builds de
-LiteLLM (`main-latest`), ce champ envoie un attribut `source_url` que le
-schéma de la base ne connaît pas encore, ce qui bloque la création avec
-l'erreur `Could not find field at createOneLiteLLM_MCPServerTable.data.source_url`.
-Laisser le champ vide pour contourner le problème.
+Enregistrer, puis vérifier que les outils sont découverts. Une installation
+locale relève de la documentation du [projet
+upstream](https://github.com/datagouv/datagouv-mcp).
 
-Enregistrer, puis vérifier que les outils sont découverts. Le transport utilisé
-est Streamable HTTP ; une installation locale relève de la documentation du
-[projet upstream](https://github.com/datagouv/datagouv-mcp).
-
-La déclaration dans LiteLLM ne suffit pas à rendre automatiquement les outils
-visibles dans OpenWebUI. OpenWebUI doit aussi être configuré comme client MCP,
-ou une intégration doit transmettre la définition du serveur dans le champ
-`tools` de la requête au modèle. Voir le [guide d'installation](../installation.md)
-pour distinguer ces deux étapes.
+Déclarer aussi ce serveur dans LiteLLM reste possible mais facultatif — voir
+le [guide d'installation](../installation.md) pour la distinction entre les
+deux étapes.
 
 ## Tests
 
