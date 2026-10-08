@@ -4,3 +4,6 @@ purpose: Catalogue de connecteurs MCP pour le POC Esup MyIA.
 connectors:
   - datagouv
   - grist
+  - hal
+  - openalex
+  - legifrance

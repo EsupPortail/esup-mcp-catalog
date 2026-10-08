@@ -1,0 +1,20 @@
+id: openalex
+display_name: OpenAlex MCP
+status: poc
+source:
+  repository: à confirmer lors de l'implémentation
+  documentation: https://docs.openalex.org/
+connection:
+  transport: streamable-http
+  url: https://mcp.openalex.org/mcp
+  # Non confirmé : un badge "oauth_delegate" a été observé côté LiteLLM pour
+  # ce connecteur. Ne pas supposer "none" sans test : si la découverte
+  # d'outils échoue dans OpenWebUI, passer à OAuth 2.1 (enregistrement
+  # dynamique de client) et mettre ce champ à jour.
+  authentication: none
+capabilities:
+  access: read-only
+  domains: [works, authors, institutions, venues, concepts, recherche-bibliographique-internationale]
+security:
+  confirmation_required: false
+  external_results_are_untrusted: true

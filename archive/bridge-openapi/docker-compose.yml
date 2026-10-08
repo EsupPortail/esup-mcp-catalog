@@ -1,0 +1,11 @@
+services:
+  mcp-openapi-bridge:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${MCP_BRIDGE_PORT:-8090}:8090"
+    env_file:
+      - .env.bridge
+
+# Le service grist-mcp vit maintenant dans ../grist-mcp/docker-compose.yml,
+# independamment du bridge.

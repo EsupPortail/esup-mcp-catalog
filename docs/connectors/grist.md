@@ -43,60 +43,57 @@ locale ou une autre instance, adapter cette URL en conséquence. Ne pas
 utiliser l'URL d'une page Grist contenant `/o/.../ws/...` comme URL API.
 
 Le serveur MCP Grist peut fonctionner en STDIO ou en Streamable HTTP. La
-configuration de l'instance Grist reste la même dans les deux cas. Pour la
-configuration par défaut avec LiteLLM, utiliser l'URL Streamable HTTP du
-serveur MCP fourni par l'établissement.
+configuration de l'instance Grist reste la même dans les deux cas. OpenWebUI
+ne sait se connecter qu'en Streamable HTTP : utiliser l'URL Streamable HTTP
+du serveur MCP fourni par l'établissement.
 
-Pour un déploiement local, le [bridge](../../bridge/README.md) inclut un
-service Docker `grist-mcp` qui lance ce serveur automatiquement (voir
-`bridge/docker-compose.yml`), joignable sous `http://127.0.0.1:8000/mcp`
+Pour un déploiement local, [`grist-mcp/`](../../grist-mcp/README.md) lance
+ce serveur automatiquement, joignable sous `http://127.0.0.1:8000/mcp`
 depuis le Mac et `http://grist-mcp:8000/mcp` depuis les autres conteneurs du
-bridge.
+même réseau Docker.
 
-Dans LiteLLM, ouvrir **MCP Servers > Add New MCP Server** et renseigner :
+Dans **Panneau d'administration > Réglages > Intégrations > Serveurs
+d'outils externes** d'OpenWebUI, ajouter une connexion :
 
 | Champ | Valeur |
 |---|---|
+| Type | **MCP (Streamable HTTP)** |
 | Nom | `grist` |
-| MCP Server URL / Server URL | l'URL MCP du serveur Grist |
-| Transport | **Streamable HTTP** |
+| URL | l'URL MCP du serveur Grist |
 | Authentification | selon le déploiement, voir ci-dessous |
 
 Deux cas selon qui héberge le serveur MCP Grist :
 
 - **Serveur partagé par l'établissement** : l'authentification se fait par clé
-  transmise à chaque appel. Choisir **API Key** et coller la clé API Grist
+  transmise à chaque appel. Choisir **Bearer** et coller la clé API Grist
   dans le champ secret.
-- **Serveur lancé localement** (service `grist-mcp` du bridge, `GRIST_API_KEY`
-  dans son propre environnement) : le serveur porte déjà la clé, aucune
-  authentification supplémentaire n'est nécessaire côté LiteLLM. Choisir
-  **aucune**.
+- **Serveur lancé localement** (`grist-mcp/`, `GRIST_API_KEY` dans son
+  propre environnement) : le serveur porte déjà la clé, aucune
+  authentification supplémentaire n'est nécessaire côté OpenWebUI. Choisir
+  **Aucune**.
 
-Ne pas renseigner le champ **GitHub / Source URL** : sur certaines builds de
-LiteLLM (`main-latest`), ce champ envoie un attribut `source_url` que le
-schéma de la base ne connaît pas encore, ce qui bloque la création avec
-l'erreur `Could not find field at createOneLiteLLM_MCPServerTable.data.source_url`.
-Laisser le champ vide pour contourner le problème.
+La *liste de filtrage des noms de fonctions* de la connexion peut être
+utilisée pour exclure les outils Grist destructifs ou d'administration
+(suppression de documents, gestion des droits) de cette connexion — voir
+les noms d'outils exacts exposés avant de composer la liste.
 
-Avec Docker Desktop, si le serveur MCP Grist tourne sur le Mac (service
-`grist-mcp` du bridge ou processus local), saisir
-`http://host.docker.internal:8000/mcp` dans LiteLLM. Ne pas saisir
-`localhost`, car il désignerait le conteneur LiteLLM lui-même.
+Avec Docker Desktop, si le serveur MCP Grist tourne sur le Mac
+(`grist-mcp/` ou processus local), saisir
+`http://host.docker.internal:8000/mcp`. Ne pas saisir `localhost`, car il
+désignerait le conteneur OpenWebUI lui-même.
 
 Le transport SSE est déprécié par le projet Grist et ne doit pas être choisi
 pour une nouvelle installation. Pour le mode STDIO, consulter la
 [documentation du projet Grist](https://github.com/nic01asFr/mcp-server-grist#readme).
 
-La déclaration dans LiteLLM ne suffit pas à rendre automatiquement les outils
-visibles dans OpenWebUI. OpenWebUI doit aussi être configuré comme client MCP,
-ou une intégration doit transmettre la définition du serveur dans le champ
-`tools` de la requête au modèle. Voir le [guide d'installation](../installation.md)
-pour distinguer ces deux étapes.
+Déclarer aussi ce serveur dans LiteLLM reste possible mais facultatif — voir
+le [guide d'installation](../installation.md) pour la distinction entre les
+deux étapes.
 
 ## Tests
 
-1. Dans LiteLLM, vérifier que le serveur est joignable et que les outils sont
-   découverts.
+1. Dans OpenWebUI, vérifier sur l'écran de la connexion que le serveur est
+   joignable et que les outils sont découverts.
 2. Dans OpenWebUI, envoyer les demandes de lecture ci-dessus avec un espace et
    un document de test.
 3. Vérifier successivement les organisations, espaces, documents, tables et
@@ -106,16 +103,17 @@ pour distinguer ces deux étapes.
 
    > Ajoute une ligne de test dans cette table Grist.
 
-   Le bridge actuel ne demande pas de confirmation avant d'écrire : l'action
+   OpenWebUI ne demande pas de confirmation avant d'écrire : l'action
    s'exécute directement si la clé API Grist le permet. Ne tester une écriture
    que dans un document Grist dédié et jetable, avec une clé dont les droits
    sont limités à ce document.
 
 Les créations, modifications, suppressions, imports, changements de droits,
-téléversements et webhooks devront être autorisés par le bridge, confirmés par
-l'utilisateur et journalisés sans clé ni contenu sensible : ce contrôle n'est
-pas encore construit (voir feuille de route). Tant qu'il ne l'est pas, seule
-la clé API Grist limite ce que le connecteur peut faire.
+téléversements et webhooks devront être confirmés par l'utilisateur et
+journalisés sans clé ni contenu sensible : ce contrôle n'est pas encore
+construit (voir feuille de route). Tant qu'il ne l'est pas, seules la clé
+API Grist et la liste de filtrage des noms de fonctions de la connexion
+limitent ce que le connecteur peut faire.
 
 ## Limites et dépannage
 
@@ -125,10 +123,9 @@ la clé API Grist limite ce que le connecteur peut faire.
    l'URL API de l'instance choisie, pas vers une URL de navigation Grist.
 - Si aucun outil n'est découvert, vérifier le lancement du serveur, le chemin
   `/mcp` et le transport Streamable HTTP.
-- Si LiteLLM ne joint pas le serveur sous Docker Desktop, remplacer
-  `127.0.0.1` par `host.docker.internal` dans l'URL saisie dans LiteLLM.
-- Si une action est refusée, vérifier les droits de la clé et la règle de
-  confirmation du bridge.
+- Si OpenWebUI ne joint pas le serveur sous Docker Desktop, remplacer
+  `127.0.0.1` par `host.docker.internal` dans l'URL de la connexion.
+- Si une action est refusée, vérifier les droits de la clé Grist.
 - `id` est un nom de colonne réservé par Grist (identifiant de ligne
   généré automatiquement) : une insertion (`add_grist_records`) contenant
   une colonne `id` échoue avec `Invalid column "id"`. Renommer ou retirer

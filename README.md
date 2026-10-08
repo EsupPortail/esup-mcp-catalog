@@ -1,9 +1,12 @@
 # MCP Catalog pour Esup MyIA
 
-Ce dépôt constitue le POC du catalogue de serveurs MCP pour Esup MyIA. Il documente le raccordement d'Esup MyIA Mistral AMUE à deux serveurs MCP existants :
+Ce dépôt constitue le POC du catalogue de serveurs MCP pour Esup MyIA. Il documente le raccordement d'Esup MyIA Mistral AMUE à cinq serveurs MCP existants :
 
 - [data.gouv.fr MCP](https://github.com/datagouv/datagouv-mcp), serveur public de consultation des données et ressources data.gouv.fr ;
-- [Grist MCP](https://github.com/nic01asFr/mcp-server-grist), connecteur Grist utilisé pour les besoins de La Suite numérique.
+- [Grist MCP](https://github.com/nic01asFr/mcp-server-grist), connecteur Grist utilisé pour les besoins de La Suite numérique ;
+- [HAL MCP](https://hal.science/), archive ouverte française de publications scientifiques ;
+- [OpenAlex MCP](https://docs.openalex.org/), recherche de publications et métadonnées académiques à l'échelle internationale ;
+- Légifrance MCP (projet [OpenLegi](https://mcp.openlegi.fr/)), recherche de textes législatifs et réglementaires français.
 
 Le code de ces serveurs reste externe à ce dépôt.
 
@@ -24,30 +27,56 @@ Ce document s'adresse d'abord aux personnes qui connaissent les usages de MyIA e
 ```mermaid
 flowchart LR
     U[Utilisateur] --> OW[OpenWebUI]
-    OW --> AB[Esup MCP Agent Bridge]
-    AB --> LL[LiteLLM]
+    OW --> LL[LiteLLM]
     LL --> M[Mistral ESR / ILaaS]
-    AB --> DG[data.gouv.fr MCP]
-    AB --> GR[Grist MCP / La Suite]
-    AB --> A[Autorisations, confirmations et audit]
+    OW --> DG[data.gouv.fr MCP]
+    OW --> GR[Grist MCP / La Suite]
+    OW --> HAL[HAL MCP]
+    OW --> OA[OpenAlex MCP]
+    OW --> LEG[Légifrance / OpenLegi MCP]
+    OW --> A[Autorisations, confirmations et audit]
 ```
 
-Le bridge actuel relaie les appels vers les serveurs MCP configurés ; il ne vérifie pas encore les droits par utilisateur et ne demande pas de confirmation avant une action sensible (voir feuille de route). En attendant, n'activer un connecteur en écriture qu'avec une clé dont les droits sont déjà limités à ce qui est autorisé. Les secrets ne doivent jamais être envoyés à OpenWebUI, au modèle, dans les logs ou dans Git.
+OpenWebUI se connecte directement, en MCP natif (Streamable HTTP), à chaque
+serveur MCP activé — sans composant intermédiaire. Il ne vérifie pas encore
+les droits par utilisateur et ne demande pas de confirmation avant une
+action sensible par défaut (voir feuille de route). La *liste de filtrage
+des noms de fonctions* de chaque connexion OpenWebUI permet de restreindre
+les outils exposés par serveur (par exemple exclure les outils Grist
+destructifs ou d'administration) ; c'est une atténuation partielle, pas un
+remplacement d'une vraie confirmation ou d'un audit. En attendant, n'activer
+un connecteur en écriture qu'avec une clé dont les droits sont déjà limités
+à ce qui est autorisé. Les secrets ne doivent jamais être envoyés à
+OpenWebUI, au modèle, dans les logs ou dans Git.
+
+Le support MCP natif d'OpenWebUI reste qualifié d'expérimental et évolue
+rapidement, par les mots de sa propre documentation, qui indique que
+l'intégration OpenAPI reste la mieux maintenue par son équipe. Ce choix
+accepte ce compromis pour simplifier radicalement la stack ; une
+architecture précédente avec un bridge de traduction MCP→OpenAPI reste
+documentée dans [`archive/bridge-openapi/`](archive/bridge-openapi/ARCHIVE.md)
+si ce compromis devait être reconsidéré.
 
 ## Serveurs MCP du POC
 
-Le POC propose deux connecteurs :
+Le POC propose cinq connecteurs :
 
 | Connecteur | Usage principal | Accès |
 |---|---|---|
 | data.gouv.fr | Rechercher et consulter des données publiques | Serveur public, lecture seule |
 | Grist / La Suite numérique | Consulter des données structurées et, si autorisé, les modifier | Instance La Suite numérique par défaut, clé dédiée |
+| HAL | Rechercher des publications scientifiques et données d'auteurs/structures | Serveur public, lecture seule |
+| OpenAlex | Rechercher des publications et métadonnées académiques internationales | Serveur public, lecture seule |
+| Légifrance / OpenLegi | Rechercher des textes législatifs et réglementaires français | Serveur public, lecture seule |
 
-Les procédures, exemples de demandes, paramètres LiteLLM, tests et limites sont
-regroupés dans les fiches dédiées :
+Les procédures, exemples de demandes, paramètres d'installation, tests et
+limites sont regroupés dans les fiches dédiées :
 
 - [Connecteur data.gouv.fr](docs/connectors/datagouv.md) ;
-- [Connecteur Grist](docs/connectors/grist.md).
+- [Connecteur Grist](docs/connectors/grist.md) ;
+- [Connecteur HAL](docs/connectors/hal.md) ;
+- [Connecteur OpenAlex](docs/connectors/openalex.md) ;
+- [Connecteur Légifrance](docs/connectors/legifrance.md).
 
 Le [guide d'installation](docs/installation.md) décrit le parcours commun dans
 LiteLLM et OpenWebUI. Les secrets ne doivent jamais être inscrits dans ce
@@ -63,11 +92,14 @@ Le catalogue et les manifestes YAML associés sont disponibles ici :
 
 - [Catalogue du POC](catalog.yaml) ;
 - [Manifeste data.gouv.fr](connectors/datagouv.yaml) ;
-- [Manifeste Grist](connectors/grist.yaml).
+- [Manifeste Grist](connectors/grist.yaml) ;
+- [Manifeste HAL](connectors/hal.yaml) ;
+- [Manifeste OpenAlex](connectors/openalex.yaml) ;
+- [Manifeste Légifrance](connectors/legifrance.yaml).
 
 ## Périmètre et évolutions
 
-Le POC se limite à data.gouv.fr et Grist. D'autres connecteurs pourront être étudiés ultérieurement selon la maturité de leur API, leur utilité pour l'ESR, leur maintenabilité et le niveau de risque associé.
+Le POC couvre data.gouv.fr, Grist, HAL, OpenAlex et Légifrance/OpenLegi. D'autres connecteurs pourront être étudiés ultérieurement selon la maturité de leur API, leur utilité pour l'ESR, leur maintenabilité et le niveau de risque associé.
 
 Les applications manipulant des données sensibles nécessiteront une analyse RGPD et sécurité dédiée avant toute intégration. Les fonctions d'authentification multifacteur et les envois massifs ne font pas partie des usages visés.
 
@@ -82,7 +114,7 @@ Chaque connecteur a vocation à être un conteneur Docker autonome, déclaré co
 3. activer l'outil dans l'administration MyIA/OpenWebUI ;
 4. vérifier les permissions, le healthcheck et l'audit avant ouverture aux utilisateurs.
 
-L'utilisateur final ne configure pas les connecteurs. Le bridge et la couche d'administration portent les règles d'accès, les confirmations avant écriture et la journalisation sans contenu sensible.
+L'utilisateur final ne configure pas les connecteurs. OpenWebUI (via ses connexions MCP natives) et la couche d'administration portent les règles d'accès, les confirmations avant écriture et la journalisation sans contenu sensible.
 
 ## Gouvernance et maintenance
 
@@ -104,7 +136,6 @@ secrets.
 
 ## Feuille de route
 
-- ajouter le catalogue validé au bridge ;
 - définir le manifeste, le label de compatibilité et le processus de revue communautaire ;
 - intégrer les permissions par utilisateur et groupe ;
 - limiter les outils Grist exposés selon le profil ;
@@ -112,9 +143,20 @@ secrets.
 - tester la configuration Docker et les connexions MCP sans secret réel ;
 - évaluer progressivement les candidats du catalogue selon leur API et leur niveau de risque ;
 - réduire la dépendance à l'enchaînement d'outils du modèle sur les tâches
-  multi-connecteurs (system prompt dédié, déjà testé, ou outil composite
-  côté bridge qui exécute un pipeline complet en un seul appel — voir le
-  [cas d'usage data.gouv.fr → Grist](docs/cas-usage-datagouv-grist.md)).
+  multi-connecteurs (system prompt dédié, déjà testé — voir le
+  [cas d'usage data.gouv.fr → Grist](docs/cas-usage-datagouv-grist.md)) ;
+- valider la *liste de filtrage des noms de fonctions* d'OpenWebUI comme
+  mécanisme de limitation d'exposition des outils Grist
+  destructifs/d'administration ;
+- confirmer empiriquement le mode d'authentification réel de HAL, OpenAlex
+  et Légifrance/OpenLegi lors du premier ajout de chaque connexion (voir
+  les manifestes, champs marqués comme hypothèses non confirmées) ;
+- revalider si le problème de cache navigateur après ajout d'une connexion
+  (constaté avec le bridge) se reproduit avec les connexions MCP natives ;
+- surveiller le statut expérimental du support MCP d'OpenWebUI en cas de
+  régression, avec l'architecture bridge archivée
+  ([`archive/bridge-openapi/`](archive/bridge-openapi/ARCHIVE.md)) comme
+  filet de secours documenté.
 
 ## Glossaire
 
@@ -123,7 +165,8 @@ secrets.
 - **MCP** (*Model Context Protocol*) : protocole ouvert qui décrit la manière de présenter des outils et des données à un assistant IA.
 - **Serveur MCP** : connecteur qui traduit les demandes de l'assistant en appels compréhensibles par une application, et qui renvoie les résultats à l'assistant.
 - **Connecteur** : autre nom donné à un serveur MCP lorsqu'on insiste sur son rôle de liaison avec une application.
-- **Bridge** : composant intermédiaire qui relaie les demandes de l'assistant vers les serveurs MCP activés. Le choix des connecteurs, la vérification des droits et la confirmation avant une action sensible sont prévus mais pas encore construits (voir feuille de route).
+- **Bridge** : composant utilisé dans l'architecture précédente du projet, avant le support natif de MCP par OpenWebUI (v0.6.31+), pour traduire les appels MCP en OpenAPI. Conservé à titre documentaire dans [`archive/bridge-openapi/`](archive/bridge-openapi/ARCHIVE.md) ; l'architecture actuelle n'en a plus besoin, OpenWebUI se connectant directement à chaque serveur MCP.
+- **Liste de filtrage des noms de fonctions** (*Function Name Filter List*) : champ d'une connexion MCP dans OpenWebUI permettant de limiter les outils exposés par cette connexion (par exemple exclure des outils destructifs). Laissé vide, il peut provoquer une erreur de connexion sur certaines versions d'OpenWebUI (voir le [guide d'installation](docs/installation.md)).
 - **Endpoint** : adresse précise à laquelle un service est joignable, par exemple `https://mcp.data.gouv.fr/mcp`.
 - **Transport** : manière dont le client et le serveur échangent leurs messages. `Streamable HTTP` utilise une connexion web ; `STDIO` utilise les entrées et sorties d'un programme lancé localement.
 - **LiteLLM** : composant qui relaie les demandes entre MyIA et le modèle Mistral, et qui peut aussi déclarer des serveurs MCP.
