@@ -1,0 +1,18 @@
+id: hal
+display_name: HAL MCP
+status: poc
+source:
+  repository: à confirmer lors de l'implémentation
+  documentation: https://hal.science/
+connection:
+  transport: streamable-http
+  url: https://api.archives-ouvertes.fr/mcp
+  # Hypothèse par analogie avec data.gouv.fr, non confirmée. A vérifier
+  # empiriquement au premier ajout de la connexion dans OpenWebUI.
+  authentication: none
+capabilities:
+  access: read-only
+  domains: [publications, auteurs, structures, recherche-bibliographique]
+security:
+  confirmation_required: false
+  external_results_are_untrusted: true

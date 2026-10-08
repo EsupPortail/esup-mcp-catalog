@@ -1,0 +1,20 @@
+id: legifrance
+display_name: Légifrance MCP (OpenLegi)
+status: poc
+source:
+  repository: à confirmer lors de l'implémentation
+  documentation: à confirmer lors de l'implémentation
+connection:
+  transport: streamable-http
+  url: https://mcp.openlegi.fr/legifrance/mcp
+  # Non confirmé. L'API officielle Légifrance (PISTE/DILA) exige
+  # normalement des identifiants OAuth ; si ce proxy MCP les porte
+  # lui-même côté serveur, "none" est plausible côté OpenWebUI — à
+  # vérifier, pas à supposer.
+  authentication: none
+capabilities:
+  access: read-only
+  domains: [codes, lois, decrets, jurisprudence, jorf]
+security:
+  confirmation_required: false
+  external_results_are_untrusted: true
