@@ -32,12 +32,13 @@ Le serveur public est déjà hébergé. Il ne nécessite pas de clé.
 Dans **Panneau d'administration > Réglages > Intégrations > Serveurs
 d'outils externes** d'OpenWebUI, ajouter une connexion :
 
-| Champ | Valeur |
-|---|---|
-| Type | **MCP (Streamable HTTP)** |
-| Nom | `data.gouv.fr` |
-| URL | `https://mcp.data.gouv.fr/mcp` |
-| Authentification | Aucune |
+| Champ            | Valeur                         |
+| ---------------- | ------------------------------ |
+| Type             | **MCP (Streamable HTTP)**      |
+| ID               | `datagouv`                     |
+| Nom              | `data.gouv.fr`                 |
+| URL              | `https://mcp.data.gouv.fr/mcp` |
+| Authentification | Aucune                         |
 
 Enregistrer, puis vérifier que les outils sont découverts. Une installation
 locale relève de la documentation du [projet

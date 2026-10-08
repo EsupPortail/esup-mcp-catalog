@@ -1,0 +1,25 @@
+id: pubmed
+display_name: PubMed MCP
+status: poc
+source:
+  repository: à confirmer lors de l'implémentation
+  documentation: https://pubmed.ncbi.nlm.nih.gov/
+connection:
+  transport: streamable-http
+  url: https://pubmed.caseyjhand.com/mcp
+  authentication: bearer
+configuration:
+  required:
+    - NCBI_API_KEY
+  notes: >-
+    Créer un compte sur https://account.ncbi.nlm.nih.gov/settings/ pour
+    obtenir un jeton API NCBI. Ce serveur MCP est hébergé par un tiers
+    (caseyjhand.com), pas par NCBI/PubMed lui-même : le jeton y transite,
+    évaluer la confiance accordée à cet hébergeur avant de l'utiliser avec
+    des données sensibles.
+capabilities:
+  access: read-only
+  domains: [publications, recherche-biomedicale]
+security:
+  confirmation_required: false
+  external_results_are_untrusted: true

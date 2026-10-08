@@ -43,6 +43,7 @@ d'outils externes** d'OpenWebUI, ajouter une connexion :
 | Champ | Valeur |
 |---|---|
 | Type | **MCP (Streamable HTTP)** |
+| ID | `hal` |
 | Nom | `HAL` |
 | URL | `https://api.archives-ouvertes.fr/mcp` |
 | Authentification | Aucune (hypothèse à vérifier ; passer à Bearer ou OAuth 2.1 si la découverte d'outils échoue) |

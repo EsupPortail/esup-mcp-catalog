@@ -47,6 +47,7 @@ d'outils externes** d'OpenWebUI, ajouter une connexion :
 | Champ | Valeur |
 |---|---|
 | Type | **MCP (Streamable HTTP)** |
+| ID | `openalex` |
 | Nom | `OpenAlex` |
 | URL | `https://mcp.openalex.org/mcp` |
 | Authentification | Essayer Aucune d'abord ; si la découverte d'outils échoue, passer à OAuth 2.1 (enregistrement dynamique de client) |

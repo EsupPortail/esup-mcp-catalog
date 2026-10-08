@@ -7,3 +7,4 @@ connectors:
   - hal
   - openalex
   - legifrance
+  - pubmed

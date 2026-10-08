@@ -1,12 +1,13 @@
 # MCP Catalog pour Esup MyIA
 
-Ce dépôt constitue le POC du catalogue de serveurs MCP pour Esup MyIA. Il documente le raccordement d'Esup MyIA Mistral AMUE à cinq serveurs MCP existants :
+Ce dépôt constitue le POC du catalogue de serveurs MCP pour Esup MyIA. Il documente le raccordement d'Esup MyIA Mistral AMUE à six serveurs MCP existants :
 
 - [data.gouv.fr MCP](https://github.com/datagouv/datagouv-mcp), serveur public de consultation des données et ressources data.gouv.fr ;
 - [Grist MCP](https://github.com/nic01asFr/mcp-server-grist), connecteur Grist utilisé pour les besoins de La Suite numérique ;
 - [HAL MCP](https://hal.science/), archive ouverte française de publications scientifiques ;
 - [OpenAlex MCP](https://docs.openalex.org/), recherche de publications et métadonnées académiques à l'échelle internationale ;
-- Légifrance MCP (projet [OpenLegi](https://mcp.openlegi.fr/)), recherche de textes législatifs et réglementaires français.
+- Légifrance MCP (projet [OpenLegi](https://mcp.openlegi.fr/)), recherche de textes législatifs et réglementaires français ;
+- PubMed MCP, recherche de publications médicales et biomédicales (NCBI).
 
 Le code de ces serveurs reste externe à ce dépôt.
 
@@ -34,6 +35,7 @@ flowchart LR
     OW --> HAL[HAL MCP]
     OW --> OA[OpenAlex MCP]
     OW --> LEG[Légifrance / OpenLegi MCP]
+    OW --> PM[PubMed MCP]
     OW --> A[Autorisations, confirmations et audit]
 ```
 
@@ -59,7 +61,7 @@ si ce compromis devait être reconsidéré.
 
 ## Serveurs MCP du POC
 
-Le POC propose cinq connecteurs :
+Le POC propose six connecteurs :
 
 | Connecteur | Usage principal | Accès |
 |---|---|---|
@@ -67,7 +69,8 @@ Le POC propose cinq connecteurs :
 | Grist / La Suite numérique | Consulter des données structurées et, si autorisé, les modifier | Instance La Suite numérique par défaut, clé dédiée |
 | HAL | Rechercher des publications scientifiques et données d'auteurs/structures | Serveur public, lecture seule |
 | OpenAlex | Rechercher des publications et métadonnées académiques internationales | Serveur public, lecture seule |
-| Légifrance / OpenLegi | Rechercher des textes législatifs et réglementaires français | Serveur public, lecture seule |
+| Légifrance / OpenLegi | Rechercher des textes législatifs et réglementaires français | Jeton personnel OpenLegi, lecture seule |
+| PubMed | Rechercher des publications médicales et biomédicales | Jeton NCBI, hébergement tiers, lecture seule |
 
 Les procédures, exemples de demandes, paramètres d'installation, tests et
 limites sont regroupés dans les fiches dédiées :
@@ -76,7 +79,8 @@ limites sont regroupés dans les fiches dédiées :
 - [Connecteur Grist](docs/connectors/grist.md) ;
 - [Connecteur HAL](docs/connectors/hal.md) ;
 - [Connecteur OpenAlex](docs/connectors/openalex.md) ;
-- [Connecteur Légifrance](docs/connectors/legifrance.md).
+- [Connecteur Légifrance](docs/connectors/legifrance.md) ;
+- [Connecteur PubMed](docs/connectors/pubmed.md).
 
 Le [guide d'installation](docs/installation.md) décrit le parcours commun dans
 LiteLLM et OpenWebUI. Les secrets ne doivent jamais être inscrits dans ce
@@ -95,11 +99,12 @@ Le catalogue et les manifestes YAML associés sont disponibles ici :
 - [Manifeste Grist](connectors/grist.yaml) ;
 - [Manifeste HAL](connectors/hal.yaml) ;
 - [Manifeste OpenAlex](connectors/openalex.yaml) ;
-- [Manifeste Légifrance](connectors/legifrance.yaml).
+- [Manifeste Légifrance](connectors/legifrance.yaml) ;
+- [Manifeste PubMed](connectors/pubmed.yaml).
 
 ## Périmètre et évolutions
 
-Le POC couvre data.gouv.fr, Grist, HAL, OpenAlex et Légifrance/OpenLegi. D'autres connecteurs pourront être étudiés ultérieurement selon la maturité de leur API, leur utilité pour l'ESR, leur maintenabilité et le niveau de risque associé.
+Le POC couvre data.gouv.fr, Grist, HAL, OpenAlex, Légifrance/OpenLegi et PubMed. D'autres connecteurs pourront être étudiés ultérieurement selon la maturité de leur API, leur utilité pour l'ESR, leur maintenabilité et le niveau de risque associé.
 
 Les applications manipulant des données sensibles nécessiteront une analyse RGPD et sécurité dédiée avant toute intégration. Les fonctions d'authentification multifacteur et les envois massifs ne font pas partie des usages visés.
 

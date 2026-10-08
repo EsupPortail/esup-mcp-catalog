@@ -8,7 +8,8 @@ documentés dans sa fiche :
 - [Connecteur Grist](connectors/grist.md) ;
 - [Connecteur HAL](connectors/hal.md) ;
 - [Connecteur OpenAlex](connectors/openalex.md) ;
-- [Connecteur Légifrance](connectors/legifrance.md).
+- [Connecteur Légifrance](connectors/legifrance.md) ;
+- [Connecteur PubMed](connectors/pubmed.md).
 
 Les utilisateurs finaux n'installent ni ne configurent les connecteurs.
 

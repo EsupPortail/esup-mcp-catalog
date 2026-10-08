@@ -58,6 +58,7 @@ d'outils externes** d'OpenWebUI, ajouter une connexion :
 | Champ | Valeur |
 |---|---|
 | Type | **MCP (Streamable HTTP)** |
+| ID | `grist` |
 | Nom | `grist` |
 | URL | l'URL MCP du serveur Grist |
 | Authentification | selon le déploiement, voir ci-dessous |
