@@ -72,15 +72,9 @@ Le POC propose six connecteurs :
 | Légifrance / OpenLegi | Rechercher des textes législatifs et réglementaires français | Jeton personnel OpenLegi, lecture seule |
 | PubMed | Rechercher des publications médicales et biomédicales | Jeton NCBI, hébergement tiers, lecture seule |
 
-Les procédures, exemples de demandes, paramètres d'installation, tests et
-limites sont regroupés dans les fiches dédiées :
-
-- [Connecteur data.gouv.fr](docs/connectors/datagouv.md) ;
-- [Connecteur Grist](docs/connectors/grist.md) ;
-- [Connecteur HAL](docs/connectors/hal.md) ;
-- [Connecteur OpenAlex](docs/connectors/openalex.md) ;
-- [Connecteur Légifrance](docs/connectors/legifrance.md) ;
-- [Connecteur PubMed](docs/connectors/pubmed.md).
+Les procédures, exemples de demandes, paramètres d'installation et limites
+de chaque connecteur sont regroupés dans une page unique :
+[Connecteurs du catalogue](docs/connectors.md).
 
 Le [guide d'installation](docs/installation.md) décrit le parcours commun dans
 LiteLLM et OpenWebUI. Les secrets ne doivent jamais être inscrits dans ce
@@ -89,18 +83,10 @@ dépôt.
 ## Documentation des connecteurs
 
 Le parcours commun d'ajout, de test et de retrait est décrit dans le [guide
-d'installation](docs/installation.md). Les fiches liées ci-dessus portent les
-réglages et les exemples propres à chaque connecteur.
-
-Le catalogue et les manifestes YAML associés sont disponibles ici :
-
-- [Catalogue du POC](catalog.yaml) ;
-- [Manifeste data.gouv.fr](connectors/datagouv.yaml) ;
-- [Manifeste Grist](connectors/grist.yaml) ;
-- [Manifeste HAL](connectors/hal.yaml) ;
-- [Manifeste OpenAlex](connectors/openalex.yaml) ;
-- [Manifeste Légifrance](connectors/legifrance.yaml) ;
-- [Manifeste PubMed](connectors/pubmed.yaml).
+d'installation](docs/installation.md). La page [Connecteurs du
+catalogue](docs/connectors.md) porte les réglages et les exemples propres
+à chaque connecteur ; [`catalog.yaml`](catalog.yaml) porte le détail
+structuré (URL, authentification, domaines).
 
 ## Périmètre et évolutions
 
@@ -109,6 +95,22 @@ Le POC couvre data.gouv.fr, Grist, HAL, OpenAlex, Légifrance/OpenLegi et PubMed
 Les applications manipulant des données sensibles nécessiteront une analyse RGPD et sécurité dédiée avant toute intégration. Les fonctions d'authentification multifacteur et les envois massifs ne font pas partie des usages visés.
 
 Le catalogue n'est pas une liste d'intégrations disponibles : chaque connecteur devra être évalué, documenté, versionné et validé avant d'être proposé aux établissements.
+
+### Deux familles de connecteurs
+
+Les six connecteurs ci-dessus sont tous des **pointeurs** vers un serveur
+MCP déjà hébergé ailleurs (par son éditeur ou un tiers) : une URL, un mode
+d'authentification, rien à maintenir en code ici. C'est ce que couvrent
+`catalog.yaml` et [`docs/connectors.md`](docs/connectors.md).
+
+Une deuxième famille, pas encore représentée dans ce dépôt, est en train
+d'émerger : des connecteurs **développés et maintenus par Esup**, codés
+spécifiquement plutôt que de simples pointeurs — par exemple un connecteur
+LimeSurvey porté par Morgan. Cette famille demandera une documentation plus
+complète (installation, fonctionnement, mainteneur, cycle de publication)
+et probablement un emplacement distinct du tableau des pointeurs. Le format
+exact sera précisé une fois un premier connecteur de ce type prêt à
+intégrer.
 
 ## Déploiement cible
 

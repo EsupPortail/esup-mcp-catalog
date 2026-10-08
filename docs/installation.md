@@ -1,15 +1,9 @@
 # Installer un connecteur MCP
 
 Ce guide décrit le parcours commun pour ajouter un connecteur du catalogue à
-une instance MyIA déjà lancée. Les réglages propres à chaque connecteur sont
-documentés dans sa fiche :
-
-- [Connecteur data.gouv.fr](connectors/datagouv.md) ;
-- [Connecteur Grist](connectors/grist.md) ;
-- [Connecteur HAL](connectors/hal.md) ;
-- [Connecteur OpenAlex](connectors/openalex.md) ;
-- [Connecteur Légifrance](connectors/legifrance.md) ;
-- [Connecteur PubMed](connectors/pubmed.md).
+une instance MyIA déjà lancée. Les réglages propres à chaque connecteur
+(URL, authentification, exemples de demandes, limites) sont regroupés dans
+[Connecteurs du catalogue](connectors.md).
 
 Les utilisateurs finaux n'installent ni ne configurent les connecteurs.
 
@@ -96,9 +90,9 @@ choisir au cas par cas).
 | Champ | Valeur |
 |---|---|
 | Type | **MCP (Streamable HTTP)** |
-| ID | identifiant technique du connecteur, ex. `datagouv` — reprendre le `id` du [manifeste](../connectors/) correspondant |
+| ID | identifiant technique du connecteur, ex. `datagouv` — reprendre le `id` du [catalogue](../catalog.yaml) |
 | Nom | nom affiché du connecteur, ex. `data.gouv.fr` |
-| URL | l'URL MCP du connecteur — voir sa fiche |
+| URL | l'URL MCP du connecteur — voir [Connecteurs du catalogue](connectors.md) |
 | Authentification | Aucune / Bearer / Session / OAuth 2.1 selon le connecteur — voir sa fiche |
 | Liste de filtrage des noms de fonctions | laisser vide, sauf cas particulier (voir dépannage) |
 

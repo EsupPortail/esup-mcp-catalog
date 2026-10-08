@@ -1,10 +1,144 @@
-version: 1
+version: 2
 name: esup-mcp-catalog
 purpose: Catalogue de connecteurs MCP pour le POC Esup MyIA.
 connectors:
-  - datagouv
-  - grist
-  - hal
-  - openalex
-  - legifrance
-  - pubmed
+  - id: datagouv
+    display_name: data.gouv.fr MCP
+    status: poc
+    source:
+      repository: https://github.com/datagouv/datagouv-mcp
+      documentation: https://github.com/datagouv/datagouv-mcp#readme
+    connection:
+      transport: streamable-http
+      url: https://mcp.data.gouv.fr/mcp
+      authentication: none
+    capabilities:
+      access: read-only
+      domains: [datasets, resources, organizations, dataservices, metrics]
+    security:
+      confirmation_required: false
+      external_results_are_untrusted: true
+
+  - id: grist
+    display_name: Grist MCP / La Suite numérique
+    status: poc
+    source:
+      repository: https://github.com/nic01asFr/mcp-server-grist
+      documentation: https://github.com/nic01asFr/mcp-server-grist#readme
+    connection:
+      transports: [stdio, streamable-http]
+      default_transport: stdio
+      http_url: http://127.0.0.1:8000/mcp
+      command: uvx
+      args: [mcp-server-grist]
+    configuration:
+      required:
+        - GRIST_API_KEY
+        - GRIST_API_URL
+      notes: >-
+        Le serveur pointe par défaut vers https://docs.getgrist.com/api
+        (SaaS public GetGrist) : GRIST_API_URL doit être fixée explicitement
+        pour une instance La Suite numérique ou toute autre instance.
+      defaults:
+        GRIST_API_URL: https://grist.numerique.gouv.fr/api
+    capabilities:
+      domains: [navigation, queries, records, administration, access, export, attachments, webhooks]
+    security:
+      read_access_requires_confirmation: false
+      write_access_requires_confirmation: true
+      destructive_access_requires_confirmation: true
+
+  - id: hal
+    display_name: HAL MCP
+    status: poc
+    source:
+      repository: à confirmer lors de l'implémentation
+      documentation: https://hal.science/
+    connection:
+      transport: streamable-http
+      url: https://api.archives-ouvertes.fr/mcp
+      # Hypothèse par analogie avec data.gouv.fr, non confirmée. A vérifier
+      # empiriquement au premier ajout de la connexion dans OpenWebUI.
+      authentication: none
+    capabilities:
+      access: read-only
+      domains: [publications, auteurs, structures, recherche-bibliographique]
+    security:
+      confirmation_required: false
+      external_results_are_untrusted: true
+
+  - id: openalex
+    display_name: OpenAlex MCP
+    status: poc
+    source:
+      repository: à confirmer lors de l'implémentation
+      documentation: https://docs.openalex.org/
+    connection:
+      transport: streamable-http
+      url: https://mcp.openalex.org/mcp
+      # Non confirmé : un badge "oauth_delegate" a été observé côté LiteLLM pour
+      # ce connecteur. Ne pas supposer "none" sans test : si la découverte
+      # d'outils échoue dans OpenWebUI, passer à OAuth 2.1 (enregistrement
+      # dynamique de client) et mettre ce champ à jour.
+      authentication: none
+    capabilities:
+      access: read-only
+      domains: [works, authors, institutions, venues, concepts, recherche-bibliographique-internationale]
+    security:
+      confirmation_required: false
+      external_results_are_untrusted: true
+
+  - id: legifrance
+    display_name: Légifrance MCP (OpenLegi)
+    status: poc
+    source:
+      repository: à confirmer lors de l'implémentation
+      documentation: https://www.openlegi.fr/
+    connection:
+      transport: streamable-http
+      # Le jeton personnel se transmet directement dans l'URL (paramètre
+      # ?token=), pas via un en-tête d'authentification. Remplacer
+      # {OPENLEGI_TOKEN} par la valeur réelle, jamais versionnée.
+      url: https://mcp.openlegi.fr/legifrance/mcp?token={OPENLEGI_TOKEN}
+      authentication: none
+    configuration:
+      required:
+        - OPENLEGI_TOKEN
+      notes: >-
+        Créer un compte gratuit sur openlegi.fr, puis récupérer le jeton MCP
+        depuis le tableau de bord. Ce même jeton donne accès à d'autres
+        services MCP du même tableau de bord (RNE, BOFiP, BODACC, et bientôt
+        EUR-Lex et Judilibre), non catalogués ici — voir
+        docs/connectors.md#légifrance-openlegi.
+    capabilities:
+      access: read-only
+      domains: [codes, lois, decrets, jurisprudence, jorf]
+    security:
+      confirmation_required: false
+      external_results_are_untrusted: true
+
+  - id: pubmed
+    display_name: PubMed MCP
+    status: poc
+    source:
+      repository: à confirmer lors de l'implémentation
+      documentation: https://pubmed.ncbi.nlm.nih.gov/
+    connection:
+      transport: streamable-http
+      url: https://pubmed.caseyjhand.com/mcp
+      authentication: bearer
+    configuration:
+      required:
+        - NCBI_API_KEY
+      notes: >-
+        Créer un compte sur https://account.ncbi.nlm.nih.gov/settings/ pour
+        obtenir un jeton API NCBI. Ce serveur MCP est hébergé par un tiers
+        (caseyjhand.com), pas par NCBI/PubMed lui-même : le jeton y transite,
+        évaluer la confiance accordée à cet hébergeur avant de l'utiliser avec
+        des données sensibles.
+    capabilities:
+      access: read-only
+      domains: [publications, recherche-biomedicale]
+    security:
+      confirmation_required: false
+      external_results_are_untrusted: true
