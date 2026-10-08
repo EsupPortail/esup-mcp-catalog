@@ -95,7 +95,8 @@ choisir au cas par cas).
 | Champ | Valeur |
 |---|---|
 | Type | **MCP (Streamable HTTP)** |
-| Nom | nom du connecteur, ex. `data.gouv.fr` |
+| ID | identifiant technique du connecteur, ex. `datagouv` — reprendre le `id` du [manifeste](../connectors/) correspondant |
+| Nom | nom affiché du connecteur, ex. `data.gouv.fr` |
 | URL | l'URL MCP du connecteur — voir sa fiche |
 | Authentification | Aucune / Bearer / Session / OAuth 2.1 selon le connecteur — voir sa fiche |
 | Liste de filtrage des noms de fonctions | laisser vide, sauf cas particulier (voir dépannage) |
