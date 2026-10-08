@@ -15,8 +15,8 @@ ni les identifiants techniques (dataset, document Grist).
 
 ## Pré-requis
 
-- Les connecteurs [data.gouv.fr](connectors/datagouv.md) et
-  [Grist](connectors/grist.md) déclarés comme connexions MCP dans
+- Les connecteurs [data.gouv.fr](connectors.md#datagouvfr) et
+  [Grist](connectors.md#grist) déclarés comme connexions MCP dans
   OpenWebUI.
 - Un document Grist de test existant (créé au préalable, avec un nom
   connu de l'utilisateur).
@@ -105,7 +105,7 @@ identifiant de ligne, généré automatiquement. Toute donnée externe
 contenant une colonne `id` doit être renommée (par exemple `id_source`)
 ou retirée avant l'insertion. C'est désormais couvert par le system
 prompt ci-dessus, et noté dans les [limites du connecteur
-Grist](connectors/grist.md#limites-et-dépannage).
+Grist](connectors.md#grist).
 
 ## Limite d'interface rencontrée, puis corrigée : sélection par connecteur
 

@@ -1,12 +1,13 @@
 # MCP Catalog pour Esup MyIA
 
-Ce dépôt constitue le POC du catalogue de serveurs MCP pour Esup MyIA. Il documente le raccordement d'Esup MyIA Mistral AMUE à cinq serveurs MCP existants :
+Ce dépôt constitue le POC du catalogue de serveurs MCP pour Esup MyIA. Il documente le raccordement d'Esup MyIA Mistral AMUE à six serveurs MCP existants :
 
 - [data.gouv.fr MCP](https://github.com/datagouv/datagouv-mcp), serveur public de consultation des données et ressources data.gouv.fr ;
 - [Grist MCP](https://github.com/nic01asFr/mcp-server-grist), connecteur Grist utilisé pour les besoins de La Suite numérique ;
 - [HAL MCP](https://hal.science/), archive ouverte française de publications scientifiques ;
 - [OpenAlex MCP](https://docs.openalex.org/), recherche de publications et métadonnées académiques à l'échelle internationale ;
-- Légifrance MCP (projet [OpenLegi](https://mcp.openlegi.fr/)), recherche de textes législatifs et réglementaires français.
+- Légifrance MCP (projet [OpenLegi](https://mcp.openlegi.fr/)), recherche de textes législatifs et réglementaires français ;
+- PubMed MCP, recherche de publications médicales et biomédicales (NCBI).
 
 Le code de ces serveurs reste externe à ce dépôt.
 
@@ -34,6 +35,7 @@ flowchart LR
     OW --> HAL[HAL MCP]
     OW --> OA[OpenAlex MCP]
     OW --> LEG[Légifrance / OpenLegi MCP]
+    OW --> PM[PubMed MCP]
     OW --> A[Autorisations, confirmations et audit]
 ```
 
@@ -59,7 +61,7 @@ si ce compromis devait être reconsidéré.
 
 ## Serveurs MCP du POC
 
-Le POC propose cinq connecteurs :
+Le POC propose six connecteurs :
 
 | Connecteur | Usage principal | Accès |
 |---|---|---|
@@ -67,16 +69,12 @@ Le POC propose cinq connecteurs :
 | Grist / La Suite numérique | Consulter des données structurées et, si autorisé, les modifier | Instance La Suite numérique par défaut, clé dédiée |
 | HAL | Rechercher des publications scientifiques et données d'auteurs/structures | Serveur public, lecture seule |
 | OpenAlex | Rechercher des publications et métadonnées académiques internationales | Serveur public, lecture seule |
-| Légifrance / OpenLegi | Rechercher des textes législatifs et réglementaires français | Serveur public, lecture seule |
+| Légifrance / OpenLegi | Rechercher des textes législatifs et réglementaires français | Jeton personnel OpenLegi, lecture seule |
+| PubMed | Rechercher des publications médicales et biomédicales | Jeton NCBI, hébergement tiers, lecture seule |
 
-Les procédures, exemples de demandes, paramètres d'installation, tests et
-limites sont regroupés dans les fiches dédiées :
-
-- [Connecteur data.gouv.fr](docs/connectors/datagouv.md) ;
-- [Connecteur Grist](docs/connectors/grist.md) ;
-- [Connecteur HAL](docs/connectors/hal.md) ;
-- [Connecteur OpenAlex](docs/connectors/openalex.md) ;
-- [Connecteur Légifrance](docs/connectors/legifrance.md).
+Les procédures, exemples de demandes, paramètres d'installation et limites
+de chaque connecteur sont regroupés dans une page unique :
+[Connecteurs du catalogue](docs/connectors.md).
 
 Le [guide d'installation](docs/installation.md) décrit le parcours commun dans
 LiteLLM et OpenWebUI. Les secrets ne doivent jamais être inscrits dans ce
@@ -85,25 +83,34 @@ dépôt.
 ## Documentation des connecteurs
 
 Le parcours commun d'ajout, de test et de retrait est décrit dans le [guide
-d'installation](docs/installation.md). Les fiches liées ci-dessus portent les
-réglages et les exemples propres à chaque connecteur.
-
-Le catalogue et les manifestes YAML associés sont disponibles ici :
-
-- [Catalogue du POC](catalog.yaml) ;
-- [Manifeste data.gouv.fr](connectors/datagouv.yaml) ;
-- [Manifeste Grist](connectors/grist.yaml) ;
-- [Manifeste HAL](connectors/hal.yaml) ;
-- [Manifeste OpenAlex](connectors/openalex.yaml) ;
-- [Manifeste Légifrance](connectors/legifrance.yaml).
+d'installation](docs/installation.md). La page [Connecteurs du
+catalogue](docs/connectors.md) porte les réglages et les exemples propres
+à chaque connecteur ; [`catalog.yaml`](catalog.yaml) porte le détail
+structuré (URL, authentification, domaines).
 
 ## Périmètre et évolutions
 
-Le POC couvre data.gouv.fr, Grist, HAL, OpenAlex et Légifrance/OpenLegi. D'autres connecteurs pourront être étudiés ultérieurement selon la maturité de leur API, leur utilité pour l'ESR, leur maintenabilité et le niveau de risque associé.
+Le POC couvre data.gouv.fr, Grist, HAL, OpenAlex, Légifrance/OpenLegi et PubMed. D'autres connecteurs pourront être étudiés ultérieurement selon la maturité de leur API, leur utilité pour l'ESR, leur maintenabilité et le niveau de risque associé.
 
 Les applications manipulant des données sensibles nécessiteront une analyse RGPD et sécurité dédiée avant toute intégration. Les fonctions d'authentification multifacteur et les envois massifs ne font pas partie des usages visés.
 
 Le catalogue n'est pas une liste d'intégrations disponibles : chaque connecteur devra être évalué, documenté, versionné et validé avant d'être proposé aux établissements.
+
+### Deux familles de connecteurs
+
+Les six connecteurs ci-dessus sont tous des **pointeurs** vers un serveur
+MCP déjà hébergé ailleurs (par son éditeur ou un tiers) : une URL, un mode
+d'authentification, rien à maintenir en code ici. C'est ce que couvrent
+`catalog.yaml` et [`docs/connectors.md`](docs/connectors.md).
+
+Une deuxième famille, pas encore représentée dans ce dépôt, est en train
+d'émerger : des connecteurs **développés et maintenus par Esup**, codés
+spécifiquement plutôt que de simples pointeurs — par exemple un connecteur
+LimeSurvey porté par Morgan. Cette famille demandera une documentation plus
+complète (installation, fonctionnement, mainteneur, cycle de publication)
+et probablement un emplacement distinct du tableau des pointeurs. Le format
+exact sera précisé une fois un premier connecteur de ce type prêt à
+intégrer.
 
 ## Déploiement cible
 
@@ -148,9 +155,11 @@ secrets.
 - valider la *liste de filtrage des noms de fonctions* d'OpenWebUI comme
   mécanisme de limitation d'exposition des outils Grist
   destructifs/d'administration ;
-- confirmer empiriquement le mode d'authentification réel de HAL, OpenAlex
-  et Légifrance/OpenLegi lors du premier ajout de chaque connexion (voir
-  les manifestes, champs marqués comme hypothèses non confirmées) ;
+- confirmer empiriquement le mode d'authentification réel de HAL et
+  OpenAlex lors du premier ajout de chaque connexion (voir les manifestes,
+  champs marqués comme hypothèses non confirmées) — Légifrance/OpenLegi est
+  confirmé : jeton personnel transmis dans l'URL de connexion, à créer sur
+  [openlegi.fr](https://www.openlegi.fr/) ;
 - revalider si le problème de cache navigateur après ajout d'une connexion
   (constaté avec le bridge) se reproduit avec les connexions MCP natives ;
 - surveiller le statut expérimental du support MCP d'OpenWebUI en cas de

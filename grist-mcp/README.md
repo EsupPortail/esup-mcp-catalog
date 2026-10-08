@@ -6,7 +6,7 @@ l'établissement.
 
 Retirer ce service si un serveur Grist MCP est déjà fourni par
 l'établissement — pointer directement vers son URL dans la fiche
-[Connecteur Grist](../docs/connectors/grist.md).
+[Connecteur Grist](../docs/connectors.md#grist).
 
 ## Démarrage
 
@@ -32,5 +32,5 @@ docker compose up -d
   projet Docker (ex. OpenWebUI lancé séparément), le port étant publié sur
   l'hôte
 
-Voir la fiche [Connecteur Grist](../docs/connectors/grist.md) pour la
+Voir la fiche [Connecteur Grist](../docs/connectors.md#grist) pour la
 déclaration de ce serveur comme connexion MCP dans OpenWebUI.
