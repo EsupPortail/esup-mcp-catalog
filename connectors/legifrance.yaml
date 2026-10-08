@@ -3,15 +3,20 @@ display_name: Légifrance MCP (OpenLegi)
 status: poc
 source:
   repository: à confirmer lors de l'implémentation
-  documentation: à confirmer lors de l'implémentation
+  documentation: https://www.openlegi.fr/
 connection:
   transport: streamable-http
-  url: https://mcp.openlegi.fr/legifrance/mcp
-  # Non confirmé. L'API officielle Légifrance (PISTE/DILA) exige
-  # normalement des identifiants OAuth ; si ce proxy MCP les porte
-  # lui-même côté serveur, "none" est plausible côté OpenWebUI — à
-  # vérifier, pas à supposer.
+  # Le jeton personnel se transmet directement dans l'URL (paramètre
+  # ?token=), pas via un en-tête d'authentification. Remplacer
+  # {OPENLEGI_TOKEN} par la valeur réelle, jamais versionnée.
+  url: https://mcp.openlegi.fr/legifrance/mcp?token={OPENLEGI_TOKEN}
   authentication: none
+configuration:
+  required:
+    - OPENLEGI_TOKEN
+  notes: >-
+    Créer un compte gratuit sur openlegi.fr, puis récupérer le jeton MCP
+    depuis le tableau de bord.
 capabilities:
   access: read-only
   domains: [codes, lois, decrets, jurisprudence, jorf]

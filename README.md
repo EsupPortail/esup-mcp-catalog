@@ -148,9 +148,11 @@ secrets.
 - valider la *liste de filtrage des noms de fonctions* d'OpenWebUI comme
   mécanisme de limitation d'exposition des outils Grist
   destructifs/d'administration ;
-- confirmer empiriquement le mode d'authentification réel de HAL, OpenAlex
-  et Légifrance/OpenLegi lors du premier ajout de chaque connexion (voir
-  les manifestes, champs marqués comme hypothèses non confirmées) ;
+- confirmer empiriquement le mode d'authentification réel de HAL et
+  OpenAlex lors du premier ajout de chaque connexion (voir les manifestes,
+  champs marqués comme hypothèses non confirmées) — Légifrance/OpenLegi est
+  confirmé : jeton personnel transmis dans l'URL de connexion, à créer sur
+  [openlegi.fr](https://www.openlegi.fr/) ;
 - revalider si le problème de cache navigateur après ajout d'une connexion
   (constaté avec le bridge) se reproduit avec les connexions MCP natives ;
 - surveiller le statut expérimental du support MCP d'OpenWebUI en cas de

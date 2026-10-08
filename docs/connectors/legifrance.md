@@ -38,10 +38,14 @@ informations trouvées par l'agent ne constituent pas un avis juridique.
 
 ## Installation
 
-Le serveur est hébergé par le projet OpenLegi. **L'authentification n'est
-pas confirmée** : l'API officielle Légifrance (PISTE/DILA) exige
-normalement des identifiants OAuth, mais ce proxy MCP peut porter ces
-identifiants lui-même côté serveur — à vérifier au premier ajout.
+Le serveur est hébergé par le projet OpenLegi. Il nécessite un jeton
+personnel, transmis **dans l'URL elle-même** (paramètre `?token=`), pas via
+un champ d'authentification séparé :
+
+1. Créer un compte gratuit sur [openlegi.fr](https://www.openlegi.fr/).
+2. Récupérer le jeton MCP depuis le tableau de bord.
+3. Conserver ce jeton comme un secret (jamais dans le dépôt, les journaux
+   ou les conversations).
 
 Dans **Panneau d'administration > Réglages > Intégrations > Serveurs
 d'outils externes** d'OpenWebUI, ajouter une connexion :
@@ -49,13 +53,12 @@ d'outils externes** d'OpenWebUI, ajouter une connexion :
 | Champ | Valeur |
 |---|---|
 | Type | **MCP (Streamable HTTP)** |
+| ID | `legifrance` |
 | Nom | `Légifrance` |
-| URL | `https://mcp.openlegi.fr/legifrance/mcp` |
-| Authentification | Essayer Aucune d'abord ; si la découverte d'outils échoue, passer à Bearer ou OAuth 2.1 selon ce qu'indique le projet OpenLegi |
+| URL | `https://mcp.openlegi.fr/legifrance/mcp?token=VOTRE_TOKEN` (remplacer `VOTRE_TOKEN` par le jeton réel) |
+| Authentification | Aucune |
 
-Enregistrer, puis vérifier que les outils sont découverts. Mettre à jour
-[`connectors/legifrance.yaml`](../../connectors/legifrance.yaml) une fois
-le mode d'authentification confirmé.
+Enregistrer, puis vérifier que les outils sont découverts.
 
 Déclarer aussi ce serveur dans LiteLLM reste possible mais facultatif — voir
 le [guide d'installation](../installation.md) pour la distinction entre les
@@ -83,8 +86,8 @@ deux étapes.
 - Un texte retrouvé doit toujours être vérifié sur la source officielle
   avant toute décision s'appuyant dessus ; ce connecteur ne remplace pas un
   conseil juridique.
-- Si le serveur n'est pas découvert en authentification "Aucune", essayer
-  Bearer puis OAuth 2.1 — voir ci-dessus.
+- Si le serveur n'est pas découvert, vérifier que le jeton dans l'URL est
+  correct et non expiré (tableau de bord OpenLegi).
 - Un champ *liste de filtrage des noms de fonctions* laissé vide peut
   provoquer une erreur de connexion sur certaines versions d'OpenWebUI —
   voir le [guide d'installation](../installation.md).
